@@ -3,14 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>pablosiu | bio</title>
-    <meta property="og:title" content="Pablosiu - Linki">
-    <meta property="og:description" content="Wpadnij po moje linki!">
-    <meta property="og:image" content="https://api.dicebear.com/7.x/pixel-art/svg?seed=pablosiu">
-    <meta name="theme-color" content="#7000ff">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     
     <style>
@@ -20,10 +15,7 @@
             --accent: #7000ff;
         }
 
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
 
         body {
             background-color: #000;
@@ -32,33 +24,30 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
             overflow: hidden;
         }
 
-        /* Video Background */
+        /* Wideo musi mieć MUTED, żeby ruszyło automatycznie */
         #bg-video {
             position: fixed;
             top: 50%; left: 50%;
             min-width: 100%; min-height: 100%;
-            z-index: -1;
+            z-index: -2;
             transform: translate(-50%, -50%);
             object-fit: cover;
             filter: brightness(0.4);
+            pointer-events: none;
         }
 
-        /* UI Elements */
         #mute-btn {
             position: fixed; top: 20px; left: 20px;
-            z-index: 10001;
+            z-index: 1001;
             background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--border);
             color: white; width: 45px; height: 45px; border-radius: 50%;
             cursor: pointer; backdrop-filter: blur(10px);
             display: flex; justify-content: center; align-items: center;
-            transition: 0.3s;
         }
-        #mute-btn:hover { transform: scale(1.1); background: var(--accent); }
 
         #overlay {
             position: fixed;
@@ -70,13 +59,12 @@
         }
         #overlay.hidden { opacity: 0; pointer-events: none; }
 
-        /* Bento Grid */
         .bento-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
             max-width: 600px;
-            width: 100%;
+            width: 90%;
             z-index: 1;
         }
 
@@ -89,7 +77,7 @@
             padding: 20px;
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
-            transition: all 0.3s ease;
+            transition: 0.3s;
             text-decoration: none; color: white;
         }
 
@@ -97,7 +85,6 @@
             border-color: var(--accent);
             transform: translateY(-5px);
             background: rgba(112, 0, 255, 0.1);
-            box-shadow: 0 10px 20px rgba(112, 0, 255, 0.2);
         }
 
         .profile-tile { grid-column: span 4; flex-direction: row; gap: 20px; justify-content: flex-start; }
@@ -108,7 +95,6 @@
         .avatar { width: 70px; height: 70px; border-radius: 50%; border: 2px solid var(--accent); }
         h1 { font-size: 22px; font-weight: 800; }
         p { color: #aaa; font-size: 13px; }
-        .tile-title { font-weight: 600; margin-top: 10px; }
 
         #copy-toast {
             position: fixed; top: 20px; right: 20px;
@@ -120,37 +106,35 @@
         }
         #copy-toast.active { transform: translateY(0); }
 
-        /* Mobile Fix */
         @media (max-width: 480px) {
             .bento-grid { grid-template-columns: repeat(2, 1fr); }
             .profile-tile { grid-column: span 2; }
-            .icon-only { grid-column: span 1; }
         }
     </style>
 </head>
 <body>
 
-<video muted loop playsinline id="bg-video">
+<video id="bg-video" loop muted playsinline>
     <source src="bg.mp4" type="video/mp4">
 </video>
+
+<audio id="bg-music" loop>
+    <source src="background.mp3" type="audio/mpeg">
+</audio>
 
 <button id="mute-btn" onclick="toggleMute()">
     <i id="mute-icon" class="fas fa-volume-up"></i>
 </button>
 
 <div id="overlay" onclick="enterSite()">
-    <div style="font-family: sans-serif; letter-spacing: 4px; font-size: 12px;">[ KLIKNIJ, ABY WEJŚĆ ]</div>
+    <div style="letter-spacing: 3px; font-size: 14px;">[ KLIKNIJ ABY WEJŚĆ ]</div>
 </div>
 
-<audio id="bg-music" loop>
-    <source src="background.mp3" type="audio/mpeg">
-</audio>
-
-<div id="copy-toast">📋 Skopiowano nick!</div>
+<div id="copy-toast">📋 Skopiowano!</div>
 
 <div class="bento-grid">
     <div class="tile profile-tile">
-        <img src="avatar.png" class="avatar" alt="me">
+        <img src="avatar.png" class="avatar" alt="pablosiu">
         <div>
             <h1>Pablosiu</h1>
             <p>Ja nie jestem Snax</p>
@@ -159,51 +143,55 @@
 
     <a href="https://youtube.com/@Pvblosiu" target="_blank" class="tile big-tile">
         <i class="fab fa-youtube" style="font-size: 40px; color: #ff0000;"></i>
-        <div class="tile-title">YouTube</div>
-        <p>Mój Kanał YT</p>
+        <div style="font-weight:600; margin-top:10px;">YouTube</div>
     </a>
 
     <a href="https://steamcommunity.com/id/pablosiu/" target="_blank" class="tile small-tile">
         <i class="fab fa-steam"></i>
-        <span class="tile-title">Steam</span>
+        <span style="font-weight:600; margin-top:5px;">Steam</span>
     </a>
 
     <div class="tile small-tile" style="cursor: pointer;" onclick="copy('pablosiu_')">
         <i class="fab fa-discord" style="color: #5865F2;"></i>
-        <span class="tile-title">Discord</span>
-        <p>Kliknij, aby skopiować</p>
+        <span style="font-weight:600; margin-top:5px;">Discord</span>
     </div>
 
-    <a href="https://x.com/pablosiu_" target="_blank" class="tile icon-only"><i class="fab fa-x-twitter"></i></a>
+    <a href="https://x.com/pablosiu_" target="_blank" class="tile icon-only"><i class="fa-brands fa-x-twitter"></i></a>
     <a href="https://github.com/itspablosiu" target="_blank" class="tile icon-only"><i class="fab fa-github"></i></a>
-    <a href="https://twitch.tv/WcaleNieAzile" target="_blank" class="tile icon-only"><i class="fab fa-twitch" style="color: #9146FF;"></i></a>
+    <a href="https://twitch.tv/WcaleNieAzile" target="_blank" class="tile icon-only"><i class="fab fa-twitch" style="color:#9146FF"></i></a>
     <a href="https://instagram.com/pablositt0" target="_blank" class="tile icon-only"><i class="fab fa-instagram"></i></a>
 </div>
 
 <script>
+    const video = document.getElementById('bg-video');
+    const audio = document.getElementById('bg-music');
+
+    // Próba odpalenia wideo od razu (bez dźwięku)
+    window.addEventListener('load', () => {
+        video.play().catch(e => console.log("Video wait for click"));
+    });
+
     function enterSite() {
         document.getElementById('overlay').classList.add('hidden');
-        const audio = document.getElementById('bg-music');
-        const video = document.getElementById('bg-video');
         
+        // Start audio po kliknięciu
         audio.volume = 0.3;
-        audio.play().catch(err => console.log("Dźwięk zablokowany przez przeglądarkę"));
+        audio.play();
+        
+        // Upewnienie się że video gra
         video.play();
     }
 
     function toggleMute() {
-        const audio = document.getElementById('bg-music');
-        const icon = document.getElementById('mute-icon');
         audio.muted = !audio.muted;
-        icon.className = audio.muted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
+        document.getElementById('mute-icon').className = audio.muted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
     }
 
     function copy(text) {
-        navigator.clipboard.writeText(text).then(() => {
-            const toast = document.getElementById('copy-toast');
-            toast.classList.add('active');
-            setTimeout(() => toast.classList.remove('active'), 2000);
-        });
+        navigator.clipboard.writeText(text);
+        const toast = document.getElementById('copy-toast');
+        toast.classList.add('active');
+        setTimeout(() => toast.classList.remove('active'), 2000);
     }
 </script>
 
