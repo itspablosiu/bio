@@ -14,13 +14,14 @@
         }
 
         body {
-            background: #0a0a0a; /* Ciemne tło */
+            background: #0a0a0a;
             background-image: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
             color: white;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            overflow: hidden;
         }
 
         .container {
@@ -28,9 +29,9 @@
             max-width: 450px;
             padding: 20px;
             text-align: center;
+            z-index: 1;
         }
 
-        /* Styl karty (Glassmorphism) */
         .profile-card {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
@@ -49,19 +50,9 @@
             object-fit: cover;
         }
 
-        h1 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
+        h1 { font-size: 24px; margin-bottom: 8px; }
+        .bio { font-size: 14px; color: #b0b0b0; margin-bottom: 25px; }
 
-        .bio {
-            font-size: 14px;
-            color: #b0b0b0;
-            margin-bottom: 25px;
-        }
-
-        /* Ikonki społecznościowe */
         .social-icons {
             display: flex;
             justify-content: center;
@@ -69,18 +60,21 @@
             margin-bottom: 30px;
         }
 
-        .social-icons a {
+        .social-icons a, .social-icons button {
             color: white;
-            font-size: 20px;
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
             transition: transform 0.3s ease, color 0.3s ease;
+            text-decoration: none;
         }
 
-        .social-icons a:hover {
+        .social-icons a:hover, .social-icons button:hover {
             transform: translateY(-3px);
-            color: #ccc;
+            color: #5865F2; /* Kolor Discorda */
         }
 
-        /* Przyciski z linkami */
         .links-container {
             display: flex;
             flex-direction: column;
@@ -95,7 +89,7 @@
             text-decoration: none;
             color: white;
             font-weight: 500;
-            transition: background 0.3s ease, transform 0.2s ease;
+            transition: 0.3s;
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
@@ -103,32 +97,73 @@
             background: rgba(255, 255, 255, 0.2);
             transform: scale(1.02);
         }
+
+        /* --- STYL POWIADOMIENIA (TOAST) --- */
+        #copy-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(255, 255, 255, 0.9);
+            color: black;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 999;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        #copy-notification.show {
+            transform: translateX(-50%) translateY(0);
+        }
     </style>
 </head>
 <body>
+
+    <div id="copy-notification">Skopiowano do schowka!</div>
 
     <div class="container">
         <div class="profile-card">
             <img src="https://via.placeholder.com/150" alt="Avatar" class="avatar">
             
             <h1>@pablosiu</h1>
-            <p class="bio">Digital Creator | Enthusiast | Gamer</p>
+            <p class="bio">Digital Creator | Discord Enthusiast</p>
 
             <div class="social-icons">
                 <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-discord"></i></a>
+                <button onclick="copyToClipboard('TwójNick#1234')">
+                    <i class="fab fa-discord"></i>
+                </button>
                 <a href="#"><i class="fab fa-github"></i></a>
             </div>
 
             <div class="links-container">
-                <a href="https://youtube.com" class="link-item" target="_blank">YouTube</a>
-                <a href="https://twitch.tv" class="link-item" target="_blank">Twitch</a>
-                <a href="https://spotify.com" class="link-item" target="_blank">My Playlist</a>
-                <a href="mailto:kontakt@twojmail.pl" class="link-item">Kontakt</a>
+                <a href="#" class="link-item">YouTube</a>
+                <a href="#" class="link-item">Portfolio</a>
             </div>
         </div>
     </div>
+
+    <script>
+        function copyToClipboard(text) {
+            // Kopiowanie tekstu do schowka
+            navigator.clipboard.writeText(text).then(() => {
+                const notification = document.getElementById('copy-notification');
+                
+                // Pokazanie powiadomienia
+                notification.classList.add('show');
+
+                // Ukrycie powiadomienia po 2 sekundach
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 2000);
+            }).catch(err => {
+                console.error('Błąd kopiowania: ', err);
+            });
+        }
+    </script>
 
 </body>
 </html>
