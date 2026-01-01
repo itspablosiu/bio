@@ -123,6 +123,23 @@
     </style>
 </head>
 <body>
+    <audio id="bg-music" loop>
+    <source src="background.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+    // Funkcja uruchamiająca muzykę
+    const startAudio = () => {
+        const audio = document.getElementById('bg-music');
+        audio.volume = 0.2; // Głośność (0.1 - cicho, 1.0 - bardzo głośno)
+        audio.play();
+        // Usuwamy nasłuchiwanie kliknięcia, żeby piosenka nie restartowała się co kliknięcie
+        document.removeEventListener('click', startAudio);
+    };
+
+    // Czekamy na pierwszy klik użytkownika na stronie
+    document.addEventListener('click', startAudio);
+</script>
 <div id="copy-toast">Skopiowano!</div>
 
 <div class="bento-grid">
