@@ -38,7 +38,6 @@
             overflow: hidden;
         }
 
-        /* WIDEO W TLE */
         #bg-video {
             position: fixed;
             top: 50%;
@@ -53,7 +52,6 @@
             filter: brightness(0.4);
         }
 
-        /* PRZYCISK WYCISZANIA */
         #mute-btn {
             position: fixed;
             top: 20px;
@@ -75,7 +73,6 @@
 
         #mute-btn:hover { transform: scale(1.1); background: rgba(112, 0, 255, 0.2); }
 
-        /* EKRAN STARTOWY */
         #overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -90,7 +87,6 @@
         }
         #overlay.hidden { opacity: 0; pointer-events: none; }
 
-        /* UKŁAD BENTO */
         .bento-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -143,11 +139,6 @@
             z-index: 10000;
         }
         #copy-toast.active { transform: translateY(0); }
-
-        @media (max-width: 480px) {
-            .bento-grid { grid-template-columns: repeat(2, 1fr); }
-            .profile-tile { grid-column: span 2; }
-        }
     </style>
 </head>
 <body>
@@ -179,13 +170,13 @@
         </div>
     </div>
 
-    <a href="https://youtube.com/@Pvblosiu" target="_blank" class="tile big-tile">
+    <a href="https://youtube.com/@Pvblosiu" target="_self" class="tile big-tile">
         <i class="fab fa-youtube" style="font-size: 40px; color: #ff0000;"></i>
         <div class="tile-title">YouTube</div>
         <p>I tak nic nie wrzucam</p>
     </a>
 
-    <a href="https://instagram.com/pablositt0" target="_blank" class="tile small-tile">
+    <a href="https://instagram.com/pablositt0" target="_self" class="tile small-tile">
         <i class="fab fa-instagram"></i>
         <span class="tile-title">Instagram</span>
     </a>
@@ -196,12 +187,17 @@
         <p>Kliknij, aby skopiować</p>
     </div>
 
-    <a href="https://x.com/pablosiu_" target="_blank" class="tile icon-only"><i class="fab fa-twitter"></i></a>
-    <a href="https://github.com/itspablosiu" target="_blank" class="tile icon-only"><i class="fab fa-github"></i></a>
-    <a href="https://twitch.tv/WcaleNieAzile" target="_blank" class="tile icon-only"><i class="fab fa-twitch"></i></a>
+    <a href="https://x.com/pablosiu_" target="_self" class="tile icon-only"><i class="fab fa-twitter"></i></a>
+    <a href="https://github.com/itspablosiu" target="_self" class="tile icon-only"><i class="fab fa-github"></i></a>
+    <a href="https://twitch.tv/WcaleNieAzile" target="_self" class="tile icon-only"><i class="fab fa-twitch"></i></a>
 </div>
 
 <script>
+    // PRZEKIEROWANIE NA ANDROIDA/IOS
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        window.location.href = "phone.html"; // Upewnij się, że plik mobilny tak się nazywa!
+    }
+
     function enterSite() {
         document.getElementById('overlay').classList.add('hidden');
         const audio = document.getElementById('bg-music');
