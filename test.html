@@ -22,10 +22,10 @@
             background-color: #000;
             color: white;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
+            min-height: 200vh; /* Zwiększona wysokość, aby było co przewijać */
+            padding-top: 10vh;
         }
 
         #bg-video {
@@ -48,26 +48,7 @@
         }
         #overlay.hidden { opacity: 0; pointer-events: none; }
 
-        #mute-btn {
-            position: fixed; top: 20px; left: 20px;
-            z-index: 1001;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--border);
-            color: white; width: 45px; height: 45px; border-radius: 50%;
-            cursor: pointer; backdrop-filter: blur(10px);
-            display: flex; justify-content: center; align-items: center;
-        }
-
-        .bento-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            max-width: 600px;
-            width: 90%;
-            z-index: 1;
-            padding: 20px 0;
-        }
-
+        /* ANIMACJA POJAWIANIA SIĘ */
         .tile {
             background: var(--tile-bg);
             backdrop-filter: blur(20px);
@@ -77,38 +58,55 @@
             padding: 20px;
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-decoration: none; color: white;
             overflow: hidden;
+
+            /* Startowy stan animacji */
+            opacity: 0;
+            transform: translateY(30px) scale(0.9);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* Stan po aktywacji animacji */
+        .tile.reveal {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
 
         .tile:hover {
             border-color: var(--accent);
-            transform: translateY(-5px);
+            transform: translateY(-5px) scale(1.02) !important;
             background: rgba(112, 0, 255, 0.15);
         }
 
-        /* Sekcja profilowa - zmiana na wyśrodkowaną kolumnę dla większego efektu */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            max-width: 600px;
+            width: 90%;
+            z-index: 1;
+        }
+
         .profile-tile { 
             grid-column: span 4; 
             flex-direction: column; 
             gap: 15px; 
-            padding: 30px 20px; 
+            padding: 40px 20px; 
         }
         
         .avatar { 
-            width: 110px; 
-            height: 110px; 
+            width: 120px; 
+            height: 120px; 
             border-radius: 50%; 
             border: 4px solid #747f8d; 
             transition: border-color 0.5s ease; 
             object-fit: cover; 
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
 
-        h1 { font-size: 28px; font-weight: 800; letter-spacing: -1px; }
+        h1 { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
 
-        /* Spotify */
         .spotify-tile { 
             grid-column: span 4; 
             display: none; 
@@ -118,45 +116,17 @@
             border-left: 4px solid var(--spotify);
         }
         .spotify-content { display: flex; align-items: center; gap: 15px; width: 100%; }
-        .spotify-info h2 { font-size: 15px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .spotify-info p { font-size: 12px; color: var(--spotify); font-weight: bold; }
         
-        #spotify-progress-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 5px; }
-        #spotify-progress-fill { width: 0%; height: 100%; background: var(--spotify); border-radius: 2px; transition: width 1s linear; }
+        #spotify-progress-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; }
+        #spotify-progress-fill { width: 0%; height: 100%; background: var(--spotify); border-radius: 2px; }
 
         .big-tile { grid-column: span 2; grid-row: span 2; }
         .small-tile { grid-column: span 2; flex-direction: row; gap: 10px; }
         .icon-only { grid-column: span 1; font-size: 24px; }
-        
-        #spotify-album { width: 55px; height: 55px; border-radius: 10px; flex-shrink: 0; }
-
-        .footer-glow {
-            grid-column: span 4;
-            text-align: center;
-            margin-top: 15px; font-size: 13px; font-weight: 800;
-            letter-spacing: 2px; text-transform: uppercase;
-            color: white; text-shadow: 0 0 10px var(--accent);
-            animation: pulseGlow 2s infinite alternate;
-        }
-
-        @keyframes pulseGlow {
-            from { opacity: 0.6; transform: scale(1); }
-            to { opacity: 1; transform: scale(1.05); }
-        }
-
-        #copy-toast {
-            position: fixed; top: 20px; right: 20px;
-            background: var(--accent);
-            padding: 12px 25px; border-radius: 50px;
-            font-weight: bold; transform: translateY(-150%);
-            transition: 0.5s; z-index: 10000;
-        }
-        #copy-toast.active { transform: translateY(0); }
 
         @media (max-width: 480px) {
             .bento-grid { grid-template-columns: repeat(2, 1fr); }
-            .profile-tile, .spotify-tile, .footer-glow { grid-column: span 2; }
-            .avatar { width: 90px; height: 90px; }
+            .profile-tile, .spotify-tile { grid-column: span 2; }
         }
     </style>
 </head>
@@ -166,19 +136,9 @@
     <source src="bg.mp4" type="video/mp4">
 </video>
 
-<audio id="bg-music" loop>
-    <source src="background.mp3" type="audio/mpeg">
-</audio>
-
-<button id="mute-btn" onclick="toggleMute()">
-    <i id="mute-icon" class="fas fa-volume-up"></i>
-</button>
-
 <div id="overlay" onclick="enterSite()">
     <div style="letter-spacing: 5px; font-size: 12px; text-transform: uppercase; font-weight: 600;">[ Kliknij, aby wejść ]</div>
 </div>
-
-<div id="copy-toast">Skopiowano!</div>
 
 <div class="bento-grid">
     <div class="tile profile-tile">
@@ -188,16 +148,14 @@
 
     <div id="spotify-tile" class="tile spotify-tile">
         <div class="spotify-content">
-            <img id="spotify-album" src="" alt="">
+            <img id="spotify-album" src="" style="width:55px; height:55px; border-radius:10px;">
             <div class="spotify-info">
-                <p><i class="fab fa-spotify"></i> SŁUCHAM TERAZ</p>
-                <h2 id="spotify-title">Ładowanie...</h2>
-                <span id="spotify-artist" style="font-size: 12px; opacity: 0.8;">Artysta</span>
+                <p style="font-size:12px; color:var(--spotify); font-weight:bold;">SŁUCHAM TERAZ</p>
+                <h2 id="spotify-title" style="font-size:15px;">Ładowanie...</h2>
+                <span id="spotify-artist" style="font-size:12px; opacity:0.8;">Artysta</span>
             </div>
         </div>
-        <div id="spotify-progress-bg">
-            <div id="spotify-progress-fill"></div>
-        </div>
+        <div id="spotify-progress-bg"><div id="spotify-progress-fill"></div></div>
     </div>
 
     <a href="https://youtube.com/@Pvblosiu" target="_blank" class="tile big-tile">
@@ -210,43 +168,41 @@
         <span style="font-weight:600;">Steam</span>
     </a>
 
-    <div class="tile small-tile" style="cursor: pointer;" onclick="copy('pablosiu_')">
+    <div class="tile small-tile" onclick="copy('pablosiu_')">
         <i class="fab fa-discord" style="font-size: 20px; color:#5865F2"></i>
         <span style="font-weight:600;">pablosiu_</span>
     </div>
 
-    <a href="https://x.com/pablosiu_" target="_blank" class="tile icon-only"><i class="fa-brands fa-x-twitter"></i></a>
-    <a href="https://github.com/itspablosiu" target="_blank" class="tile icon-only"><i class="fab fa-github"></i></a>
-    <a href="https://twitch.tv/WcaleNieAzile" target="_blank" class="tile icon-only"><i class="fab fa-twitch" style="color:#9146FF"></i></a>
-    <a href="https://instagram.com/pablositt0" target="_blank" class="tile icon-only"><i class="fab fa-instagram" style="color:#E1306C"></i></a>
-
-    <div class="footer-glow">Pablosiu 2026</div>
+    <a href="#" class="tile icon-only"><i class="fa-brands fa-x-twitter"></i></a>
+    <a href="#" class="tile icon-only"><i class="fab fa-github"></i></a>
+    <a href="#" class="tile icon-only"><i class="fab fa-twitch"></i></a>
+    <a href="#" class="tile icon-only"><i class="fab fa-instagram"></i></a>
 </div>
 
 <script>
-    const audio = document.getElementById('bg-music');
-    const video = document.getElementById('bg-video');
     const DISCORD_ID = "789133178144030737"; 
 
     function enterSite() {
         document.getElementById('overlay').classList.add('hidden');
-        audio.volume = 0.3;
-        audio.play().catch(() => {});
-        video.play();
+        document.getElementById('bg-video').play();
     }
 
-    function toggleMute() {
-        audio.muted = !audio.muted;
-        document.getElementById('mute-icon').className = audio.muted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
-    }
+    // --- ANIMACJA PRZY PRZEWIJANIU ---
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('reveal');
+            } else {
+                // Opcjonalnie usuń poniższą linię, jeśli chcesz, 
+                // aby kafelki nie znikały po odjechaniu w górę
+                entry.target.classList.remove('reveal');
+            }
+        });
+    }, { threshold: 0.1 });
 
-    function copy(text) {
-        navigator.clipboard.writeText(text);
-        const toast = document.getElementById('copy-toast');
-        toast.classList.add('active');
-        setTimeout(() => toast.classList.remove('active'), 2000);
-    }
+    document.querySelectorAll('.tile').forEach(tile => observer.observe(tile));
 
+    // --- LANYARD API (Discord & Spotify) ---
     async function updateLanyard() {
         try {
             const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
@@ -256,28 +212,23 @@
             const statusColors = { online: '#43b581', idle: '#faa61a', dnd: '#f04747', offline: '#747f8d' };
             
             if (data.discord_user.avatar) {
-                const extension = data.discord_user.avatar.startsWith('a_') ? 'gif' : 'png';
-                avatarImg.src = `https://cdn.discordapp.com/avatars/${data.discord_user.id}/${data.discord_user.avatar}.${extension}?size=256`;
+                const ext = data.discord_user.avatar.startsWith('a_') ? 'gif' : 'png';
+                avatarImg.src = `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.${ext}?size=256`;
             }
-            
             avatarImg.style.borderColor = statusColors[data.discord_status] || statusColors.offline;
 
             const spotifyTile = document.getElementById('spotify-tile');
-            if (data.listening_to_spotify && data.spotify) {
+            if (data.listening_to_spotify) {
                 spotifyTile.style.display = 'flex';
                 document.getElementById('spotify-title').innerText = data.spotify.track;
                 document.getElementById('spotify-artist').innerText = data.spotify.artist;
                 document.getElementById('spotify-album').src = data.spotify.album_art_url;
-
-                const start = data.spotify.timestamps.start;
-                const end = data.spotify.timestamps.end;
-                const now = Date.now();
-                const progress = ((now - start) / (end - start)) * 100;
-                document.getElementById('spotify-progress-fill').style.width = Math.min(Math.max(progress, 0), 100) + "%";
+                const progress = ((Date.now() - data.spotify.timestamps.start) / (data.spotify.timestamps.end - data.spotify.timestamps.start)) * 100;
+                document.getElementById('spotify-progress-fill').style.width = progress + "%";
             } else {
                 spotifyTile.style.display = 'none';
             }
-        } catch (e) { console.error("Lanyard Error"); }
+        } catch (e) {}
     }
 
     setInterval(updateLanyard, 1000);
