@@ -9,9 +9,9 @@
     
     <style>
         :root {
-            --bg: #1a1a1e; /* Rozjaśnione tło */
-            --tile: rgba(35, 35, 40, 0.8);
-            --border: rgba(255, 255, 255, 0.1);
+            --bg: #1a1a1e;
+            --tile: rgba(25, 25, 30, 0.85); /* Ciemniejsze, bardziej matowe kafelki */
+            --border: rgba(255, 255, 255, 0.08);
             --accent: #bc13fe;
             --spotify: #1DB954;
         }
@@ -19,85 +19,96 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); color: white; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
 
-        /* --- CRT EFFECT --- */
-        body::after {
-            content: " "; position: fixed; inset: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
-            z-index: 1000; background-size: 100% 3px, 3px 100%; pointer-events: none;
+        /* --- OPTYMALIZACJA TŁA --- */
+        #bg-video { 
+            position: fixed; 
+            inset: 0; 
+            width: 100vw; 
+            height: 100vh; 
+            z-index: -2; 
+            object-fit: cover; /* Automatyczne przycinanie do ekranu */
+            filter: brightness(0.4) blur(4px); /* Blur pomaga ukryć artefakty dużej rozdzielczości */
+            transform: scale(1.05); /* Skala zapobiega białym krawędziom przy blurze */
+            pointer-events: none;
         }
 
-        #bg-video { position: fixed; inset: 0; min-width: 100%; min-height: 100%; z-index: -2; object-fit: cover; filter: brightness(0.5); }
+        /* --- CRT EFFECT --- */
+        .crt-layer {
+            position: fixed; inset: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+            background-size: 100% 3px;
+            z-index: 1000; pointer-events: none;
+            opacity: 0.3;
+        }
 
-        /* --- TOP BAR (MUTE & CLOCK) --- */
+        /* --- TOP BAR --- */
         .top-bar {
             position: fixed; top: 20px; width: 90%; max-width: 500px;
             display: flex; justify-content: space-between; align-items: center; z-index: 1001;
         }
         .btn-top {
-            background: var(--tile); border: 1px solid var(--border); padding: 10px 15px;
-            border-radius: 8px; font-size: 12px; cursor: pointer; transition: 0.2s;
+            background: var(--tile); border: 1px solid var(--border); padding: 8px 15px;
+            border-radius: 6px; font-size: 11px; cursor: pointer; backdrop-filter: blur(5px);
         }
-        .btn-top:hover { border-color: white; background: #333; }
 
         /* --- NOTIFICATION --- */
         #notification {
             position: fixed; top: -60px; left: 50%; transform: translateX(-50%);
-            background: var(--accent); color: white; padding: 12px 25px;
-            border-radius: 30px; font-size: 12px; font-weight: bold; transition: 0.4s; z-index: 2000;
+            background: white; color: black; padding: 10px 20px;
+            border-radius: 4px; font-size: 11px; font-weight: bold; transition: 0.4s; z-index: 2000;
         }
-        #notification.show { top: 80px; }
+        #notification.show { top: 30px; }
 
         /* --- CONTAINER --- */
         .container {
             display: grid; grid-template-columns: repeat(2, 1fr);
-            gap: 12px; width: 90%; max-width: 500px; z-index: 10;
+            gap: 10px; width: 90%; max-width: 480px; z-index: 10;
         }
 
         .tile {
             background: var(--tile); border: 1px solid var(--border);
-            padding: 16px; border-radius: 10px; display: flex; align-items: center;
-            gap: 15px; text-decoration: none; color: white; transition: 0.2s;
+            padding: 16px; border-radius: 8px; display: flex; align-items: center;
+            gap: 12px; text-decoration: none; color: white; transition: 0.2s;
+            backdrop-filter: blur(10px);
         }
-        .tile:hover { transform: translateY(-3px); border-color: var(--accent); background: rgba(50, 50, 60, 0.9); }
+        .tile:hover { border-color: var(--accent); background: rgba(45, 45, 50, 0.9); transform: translateY(-2px); }
 
-        /* Profile & Spotify (Full Width) */
         .full-width { grid-column: span 2; }
         
-        .p-profile { padding: 20px; gap: 20px; }
-        .p-profile img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--accent); }
-        .p-profile h1 { font-size: 20px; font-weight: 700; }
-        .status-text { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        /* Profilowy kafelek */
+        .p-profile { padding: 18px; gap: 15px; border-color: rgba(188, 19, 254, 0.3); }
+        .p-profile img { width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--accent); }
+        .p-profile h1 { font-size: 18px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
 
-        .p-spotify { display: none; border-left: 4px solid var(--spotify); }
-        .p-spotify img { width: 45px; height: 45px; border-radius: 5px; }
-        .sp-info div { font-size: 10px; color: var(--spotify); font-weight: bold; margin-bottom: 3px; }
-        .sp-info p { font-size: 13px; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        /* Spotify */
+        .p-spotify { display: none; border-left: 3px solid var(--spotify); }
+        .p-spotify img { width: 40px; height: 40px; border-radius: 4px; }
+        .sp-info p { font-size: 12px; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        .tile i { font-size: 20px; width: 25px; text-align: center; }
-        .tile span { font-size: 14px; font-weight: 500; }
+        .tile i { font-size: 18px; width: 20px; text-align: center; }
+        .tile span { font-size: 13px; font-weight: 500; }
 
-        /* Icons Colors */
+        /* Ikony */
         .fa-youtube { color: #ff0000; }
         .fa-steam { color: #00adee; }
         .fa-discord { color: #5865F2; }
-        .fa-twitch { color: #a970ff; }
-        .fa-instagram { color: #e1306c; }
 
         /* Overlay */
         #overlay {
             position: fixed; inset: 0; background: #000; z-index: 9999;
             display: flex; justify-content: center; align-items: center; cursor: pointer;
         }
-        .start-btn { border: 1px solid white; padding: 15px 30px; letter-spacing: 4px; font-size: 12px; }
+        .start-btn { border: 1px solid rgba(255,255,255,0.3); padding: 12px 24px; font-size: 11px; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
-<div id="notification">SKOPIOWANO TAG DISCORD!</div>
+<div class="crt-layer"></div>
+<div id="notification">COPIED DISCORD TAG</div>
 
 <div id="overlay" onclick="launch()">
-    <div class="start-btn">ENTER SYSTEM</div>
+    <div class="start-btn">CLICK TO START</div>
 </div>
 
 <video id="bg-video" loop muted playsinline><source src="bg.mp4" type="video/mp4"></video>
@@ -110,17 +121,17 @@
 
 <div class="container">
     <div class="tile p-profile full-width">
-        <img src="" id="av" alt="Avatar">
+        <img src="" id="av" alt="">
         <div>
             <h1 id="username">Pablosiu</h1>
-            <div class="status-text" id="dis-status">OFFLINE</div>
+            <p style="font-size: 10px; color: #888;"><span id="status-dot" class="status-dot"></span> <span id="dis-status">...</span></p>
         </div>
     </div>
 
     <div class="tile p-spotify full-width" id="lfm-tile">
         <img src="" id="lfm-img">
         <div class="sp-info">
-            <div id="lfm-label">SŁUCHAM NA SPOTIFY</div>
+            <div style="font-size: 9px; color: var(--spotify); font-weight: bold;">ON SPOTIFY</div>
             <p id="lfm-track">Artist - Song</p>
         </div>
         <i class="fab fa-spotify" style="margin-left: auto; color: var(--spotify);"></i>
@@ -140,12 +151,6 @@
     </a>
     <a href="https://instagram.com/pablositt0" target="_blank" class="tile">
         <i class="fab fa-instagram"></i><span>Instagram</span>
-    </a>
-    <a href="https://github.com/itspablosiu" target="_blank" class="tile">
-        <i class="fab fa-github"></i><span>GitHub</span>
-    </a>
-    <a href="https://x.com/pablosiu_" target="_blank" class="tile">
-        <i class="fa-brands fa-x-twitter"></i><span>Twitter</span>
     </a>
 </div>
 
@@ -178,17 +183,19 @@
     }
 
     async function updateData() {
-        // Discord (Avatar & Status)
         try {
             const r = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
             const { data } = await r.json();
             if(data.discord_user.avatar) {
                 document.getElementById('av').src = `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.png?size=256`;
             }
-            document.getElementById('dis-status').innerText = data.discord_status;
+            document.getElementById('dis-status').innerText = data.discord_status.toUpperCase();
+            
+            const dot = document.getElementById('status-dot');
+            const colors = { online: '#43b581', dnd: '#f04747', idle: '#faa61a', offline: '#747f8d' };
+            dot.style.background = colors[data.discord_status] || colors.offline;
         } catch(e) {}
 
-        // Spotify
         try {
             const r = await fetch(`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LFM_USER}&api_key=${LFM_API_KEY}&format=json&limit=1`);
             const data = await r.json();
