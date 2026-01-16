@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pablosiu | Bio v2</title>
+    <title>Pablosiu | Bio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg: #1a1a1e;
-            --tile: rgba(25, 25, 30, 0.85); /* Ciemniejsze, bardziej matowe kafelki */
-            --border: rgba(255, 255, 255, 0.08);
+            --bg: #101012;
+            --tile: rgba(20, 20, 25, 0.8);
+            --border: rgba(255, 255, 255, 0.1);
             --accent: #bc13fe;
             --spotify: #1DB954;
         }
@@ -19,50 +19,45 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); color: white; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
 
-        /* --- OPTYMALIZACJA TŁA --- */
+        /* --- TŁO WIDEO (Zredukowany Blur) --- */
         #bg-video { 
-            position: fixed; 
-            inset: 0; 
-            width: 100vw; 
-            height: 100vh; 
-            z-index: -2; 
-            object-fit: cover; /* Automatyczne przycinanie do ekranu */
-            filter: brightness(0.4) blur(4px); /* Blur pomaga ukryć artefakty dużej rozdzielczości */
-            transform: scale(1.05); /* Skala zapobiega białym krawędziom przy blurze */
+            position: fixed; inset: 0; width: 100%; height: 100%; 
+            z-index: -2; object-fit: cover; 
+            filter: brightness(0.4) blur(1.5px); /* Minimalny blur dla ostrości */
             pointer-events: none;
         }
 
-        /* --- CRT EFFECT --- */
-        .crt-layer {
+        /* --- CRT SCANLINES --- */
+        .crt-overlay {
             position: fixed; inset: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
-            background-size: 100% 3px;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%);
+            background-size: 100% 4px;
             z-index: 1000; pointer-events: none;
-            opacity: 0.3;
+            opacity: 0.4;
         }
 
-        /* --- TOP BAR --- */
-        .top-bar {
-            position: fixed; top: 20px; width: 90%; max-width: 500px;
-            display: flex; justify-content: space-between; align-items: center; z-index: 1001;
-        }
-        .btn-top {
-            background: var(--tile); border: 1px solid var(--border); padding: 8px 15px;
-            border-radius: 6px; font-size: 11px; cursor: pointer; backdrop-filter: blur(5px);
-        }
-
-        /* --- NOTIFICATION --- */
+        /* --- POWIADOMIENIE --- */
         #notification {
             position: fixed; top: -60px; left: 50%; transform: translateX(-50%);
-            background: white; color: black; padding: 10px 20px;
+            background: white; color: black; padding: 10px 24px;
             border-radius: 4px; font-size: 11px; font-weight: bold; transition: 0.4s; z-index: 2000;
         }
         #notification.show { top: 30px; }
 
-        /* --- CONTAINER --- */
+        /* --- TOP BAR --- */
+        .top-bar {
+            position: fixed; top: 20px; width: 90%; max-width: 500px;
+            display: flex; justify-content: space-between; z-index: 1001;
+        }
+        .btn-top {
+            background: var(--tile); border: 1px solid var(--border); padding: 8px 12px;
+            border-radius: 6px; font-size: 10px; cursor: pointer; backdrop-filter: blur(5px);
+        }
+
+        /* --- KONTENER --- */
         .container {
             display: grid; grid-template-columns: repeat(2, 1fr);
-            gap: 10px; width: 90%; max-width: 480px; z-index: 10;
+            gap: 12px; width: 90%; max-width: 480px; z-index: 10;
         }
 
         .tile {
@@ -71,25 +66,25 @@
             gap: 12px; text-decoration: none; color: white; transition: 0.2s;
             backdrop-filter: blur(10px);
         }
-        .tile:hover { border-color: var(--accent); background: rgba(45, 45, 50, 0.9); transform: translateY(-2px); }
+        .tile:hover { border-color: var(--accent); background: rgba(40, 40, 45, 0.9); transform: translateY(-2px); }
 
         .full-width { grid-column: span 2; }
         
-        /* Profilowy kafelek */
-        .p-profile { padding: 18px; gap: 15px; border-color: rgba(188, 19, 254, 0.3); }
+        /* Profilowy */
+        .p-profile { padding: 20px; gap: 15px; border-color: rgba(188, 19, 254, 0.4); }
         .p-profile img { width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--accent); }
-        .p-profile h1 { font-size: 18px; }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .p-profile h1 { font-size: 18px; letter-spacing: -0.5px; }
+        .status-info { font-size: 10px; color: #aaa; margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+        .dot { width: 7px; height: 7px; border-radius: 50%; background: #747f8d; }
 
         /* Spotify */
         .p-spotify { display: none; border-left: 3px solid var(--spotify); }
         .p-spotify img { width: 40px; height: 40px; border-radius: 4px; }
-        .sp-info p { font-size: 12px; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .sp-info p { font-size: 12px; font-weight: 500; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         .tile i { font-size: 18px; width: 20px; text-align: center; }
         .tile span { font-size: 13px; font-weight: 500; }
 
-        /* Ikony */
         .fa-youtube { color: #ff0000; }
         .fa-steam { color: #00adee; }
         .fa-discord { color: #5865F2; }
@@ -99,16 +94,16 @@
             position: fixed; inset: 0; background: #000; z-index: 9999;
             display: flex; justify-content: center; align-items: center; cursor: pointer;
         }
-        .start-btn { border: 1px solid rgba(255,255,255,0.3); padding: 12px 24px; font-size: 11px; letter-spacing: 2px; }
+        .start-btn { border: 1px solid rgba(255,255,255,0.4); padding: 12px 24px; font-size: 11px; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
-<div class="crt-layer"></div>
-<div id="notification">COPIED DISCORD TAG</div>
+<div class="crt-overlay"></div>
+<div id="notification">SKOPIOWANO DISCORD TAG!</div>
 
 <div id="overlay" onclick="launch()">
-    <div class="start-btn">CLICK TO START</div>
+    <div class="start-btn">KLIKNIJ ABY WEJŚĆ</div>
 </div>
 
 <video id="bg-video" loop muted playsinline><source src="bg.mp4" type="video/mp4"></video>
@@ -124,15 +119,18 @@
         <img src="" id="av" alt="">
         <div>
             <h1 id="username">Pablosiu</h1>
-            <p style="font-size: 10px; color: #888;"><span id="status-dot" class="status-dot"></span> <span id="dis-status">...</span></p>
+            <div class="status-info">
+                <div id="status-dot" class="dot"></div>
+                <span id="dis-status">Ładowanie...</span>
+            </div>
         </div>
     </div>
 
     <div class="tile p-spotify full-width" id="lfm-tile">
         <img src="" id="lfm-img">
         <div class="sp-info">
-            <div style="font-size: 9px; color: var(--spotify); font-weight: bold;">ON SPOTIFY</div>
-            <p id="lfm-track">Artist - Song</p>
+            <div style="font-size: 9px; color: var(--spotify); font-weight: bold; margin-bottom: 2px;">SŁUCHAM TERAZ</div>
+            <p id="lfm-track">...</p>
         </div>
         <i class="fab fa-spotify" style="margin-left: auto; color: var(--spotify);"></i>
     </div>
@@ -143,14 +141,22 @@
     <a href="https://steamcommunity.com/id/pablosiu/" target="_blank" class="tile">
         <i class="fab fa-steam"></i><span>Steam</span>
     </a>
+    
     <div class="tile full-width" style="cursor: pointer;" onclick="copy()">
         <i class="fab fa-discord"></i><span id="discord-tag">pablosiu_</span>
     </div>
+
     <a href="https://twitch.tv/WcaleNieAzile" target="_blank" class="tile">
         <i class="fab fa-twitch"></i><span>Twitch</span>
     </a>
     <a href="https://instagram.com/pablositt0" target="_blank" class="tile">
         <i class="fab fa-instagram"></i><span>Instagram</span>
+    </a>
+    <a href="https://github.com/itspablosiu" target="_blank" class="tile">
+        <i class="fab fa-github"></i><span>GitHub</span>
+    </a>
+    <a href="https://x.com/pablosiu_" target="_blank" class="tile">
+        <i class="fa-brands fa-x-twitter"></i><span>Twitter</span>
     </a>
 </div>
 
@@ -183,19 +189,25 @@
     }
 
     async function updateData() {
+        // Discord API (Lanyard)
         try {
             const r = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
             const { data } = await r.json();
+            
+            // Avatar
             if(data.discord_user.avatar) {
                 document.getElementById('av').src = `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.png?size=256`;
             }
-            document.getElementById('dis-status').innerText = data.discord_status.toUpperCase();
-            
-            const dot = document.getElementById('status-dot');
-            const colors = { online: '#43b581', dnd: '#f04747', idle: '#faa61a', offline: '#747f8d' };
-            dot.style.background = colors[data.discord_status] || colors.offline;
-        } catch(e) {}
 
+            // Status
+            const statusNames = { online: 'Online', dnd: 'Nie przeszkadzać', idle: 'Zaraz wracam', offline: 'Offline' };
+            const statusColors = { online: '#43b581', dnd: '#f04747', idle: '#faa61a', offline: '#747f8d' };
+            
+            document.getElementById('dis-status').innerText = statusNames[data.discord_status] || 'Offline';
+            document.getElementById('status-dot').style.background = statusColors[data.discord_status] || '#747f8d';
+        } catch(e) { console.error("Discord error"); }
+
+        // Last.fm Spotify
         try {
             const r = await fetch(`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LFM_USER}&api_key=${LFM_API_KEY}&format=json&limit=1`);
             const data = await r.json();
@@ -210,7 +222,7 @@
             } else {
                 tile.style.display = 'none';
             }
-        } catch(e) {}
+        } catch(e) { console.error("Spotify error"); }
     }
 
     setInterval(updateClock, 1000);
