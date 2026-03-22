@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nalogowiec.pl | System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #030303;
+            --accent: #00ff41; /* "Matrix" green / Laboratory green */
+            --glass: rgba(10, 10, 10, 0.8);
+            --border: rgba(0, 255, 65, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'JetBrains Mono', monospace; }
+
+        body {
+            background: var(--bg);
+            color: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            /* Subtelne linie w tle - jak na papierze milimetrowym */
+            background-image: 
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .main-container {
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        /* Nagłówek */
+        .header {
+            text-align: left;
+            margin-bottom: 30px;
+            border-left: 3px solid var(--accent);
+            padding-left: 20px;
+        }
+
+        .header h1 { 
+            font-size: 24px; 
+            letter-spacing: -1px; 
+            text-transform: uppercase;
+        }
+
+        .header p { 
+            font-size: 10px; 
+            color: var(--accent); 
+            opacity: 0.7; 
+            margin-top: 5px; 
+        }
+
+        /* Lista linków - wyśrodkowana zawartość */
+        .links-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .item {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 18px;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .item:hover {
+            border-color: var(--accent);
+            background: rgba(0, 255, 65, 0.05);
+            transform: translateX(10px);
+        }
+
+        .item i { font-size: 20px; color: var(--accent); }
+        .item span { font-size: 13px; font-weight: 700; }
+        .item .domain { font-size: 9px; opacity: 0.4; }
+
+        /* Spotify Bar */
+        .spotify-status {
+            margin-top: 30px;
+            padding: 10px;
+            border-top: 1px solid var(--border);
+            display: none;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .playing-icon {
+            width: 12px; height: 12px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #track-info { font-size: 10px; color: var(--accent); }
+
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="header">
+        <h1>PABLOSIU</h1>
+        <p>IDENTYFIKATOR: 789133178144030737</p>
+        <p>LOKALIZACJA: KUJAWSKO-POMORSKIE</p>
+    </div>
+
+    <div class="links-list">
+        <a href="mailto:kontakt@nalogowiec.pl" class="item">
+            <span>E-MAIL</span>
+            <span class="domain">kontakt@nalogowiec.pl</span>
+            <i class="fas fa-envelope"></i>
+        </a>
+
+        <a href="https://youtube.com/@Pvblosiu" target="_blank" class="item">
+            <span>YOUTUBE</span>
+            <span class="domain">@Pvblosiu</span>
+            <i class="fab fa-youtube"></i>
+        </a>
+
+        <a href="https://instagram.com/pawelek_z.adwokatem" target="_blank" class="item">
+            <span>INSTAGRAM</span>
+            <span class="domain">pawelek_z.adwokatem</span>
+            <i class="fab fa-instagram"></i>
+        </a>
+
+        <div class="item" onclick="copyDiscord()" style="cursor:pointer">
+            <span>DISCORD</span>
+            <span class="domain">pablosiu_</span>
+            <i class="fab fa-discord"></i>
+        </div>
+
+        <a href="https://github.com/itspablosiu" target="_blank" class="item">
+            <span>GITHUB</span>
+            <span class="domain">itspablosiu</span>
+            <i class="fab fa-github"></i>
+        </a>
+    </div>
+
+    <div id="spotify" class="spotify-status">
+        <div class="playing-icon"></div>
+        <span id="track-info">POBIERANIE DANYCH AUDIO...</span>
+    </div>
+</div>
+
+<script>
+    const LFM_USER = "arkadivsz";
+    const LFM_API_KEY = "0d22a6285362338637e9fe9eb97a1fd0";
+
+    async function updateSpotify() {
+        try {
+            const r = await fetch(`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LFM_USER}&api_key=${LFM_API_KEY}&format=json&limit=1`);
+            const data = await r.json();
+            const track = data.recenttracks.track[0];
+            const isPlaying = track['@attr']?.nowplaying === 'true';
+            
+            const sp = document.getElementById('spotify');
+            if(isPlaying) {
+                sp.style.display = 'flex';
+                document.getElementById('track-info').innerText = `SŁUCHA TERAZ: ${track.name.toUpperCase()}`;
+            } else {
+                sp.style.display = 'none';
+            }
+        } catch(e){}
+    }
+
+    function copyDiscord() {
+        navigator.clipboard.writeText('pablosiu_');
+        alert('TAG SKOPIOWANY DO SCHOWKA');
+    }
+
+    updateSpotify();
+    setInterval(updateSpotify, 20000);
+</script>
+
+</body>
+</html>
