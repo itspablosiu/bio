@@ -5,25 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>xarex</title>
     
-    <!-- Ikony i Fonty -->
+    <!-- Ikony i Fonty (Dodany mangowy font Bangers) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Plus+Jakarta+Sans:wght@400;800&display=swap" rel="stylesheet">
     
     <!-- Główny plik ze stylami -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <!-- Efekt linii skanujących CRT dla klimatu retro-anime -->
+    <div class="crt-lines"></div>
+
     <a href="https://nalogowiec.pl/" class="back-home" id="backBtn">
         <i class="fas fa-arrow-left"></i> POWRÓT
     </a>
 
     <div id="copy-toast" class="copy-notification">
-        <i class="fas fa-check-circle"></i> SKOPIOWANO TAG!
+        <i class="fas fa-comment-dots"></i> DISCORD COPIED!
     </div>
 
     <div id="overlay" onclick="startExperience()">
-        <span>[ KLIKNIJ ]</span>
+        <span class="anime-pulse">[ CLICK TO START ]</span>
     </div>
 
     <video muted loop playsinline id="bgVideo">
@@ -38,19 +41,22 @@
         <div class="profile-header">
             <div class="av-box">
                 <img src="avatar.png" id="av" alt="Avatar">
+                <div class="av-badge">MEMBER</div>
             </div>
             <h1 class="name">Pablosiu</h1>
-            <p class="loc">Purpur to cwel</p>
+            <div class="loc-badge">
+                <p class="loc">Purpur to cwel</p>
+            </div>
         </div>
 
         <div class="social-grid">
-            <a href="https://youtube.com/@xrxwastaken" target="_blank" rel="noopener noreferrer" class="btn"><i class="fab fa-youtube"></i><span>YT</span></a>
-            <a href="https://instagram.com/pawissek" target="_blank" rel="noopener noreferrer" class="btn"><i class="fab fa-instagram"></i><span>IG</span></a>
-            <a href="https://github.com/itspablosiu" target="_blank" rel="noopener noreferrer" class="btn"><i class="fab fa-github"></i><span>GH</span></a>
-            <a href="#" onclick="copyDiscord(event)" class="btn"><i class="fab fa-discord"></i><span>DSC</span></a>
-            <a href="https://steamcommunity.com/id/clcv/" target="_blank" rel="noopener noreferrer" class="btn"><i class="fab fa-steam"></i><span>STM</span></a>
-            <a href="https://x.com/pablosiu_" target="_blank" rel="noopener noreferrer" class="btn"><i class="fab fa-x-twitter"></i><span>X</span></a>
-            <a href="https://twitch.tv/clcv_" target="_blank" rel="noopener noreferrer" class="btn"><i class="fab fa-twitch"></i><span>TTV</span></a>
+            <a href="https://youtube.com/@xrxwastaken" target="_blank" rel="noopener noreferrer" class="btn btn-yt"><i class="fab fa-youtube"></i><span>YT</span></a>
+            <a href="https://instagram.com/pawissek" target="_blank" rel="noopener noreferrer" class="btn btn-ig"><i class="fab fa-instagram"></i><span>IG</span></a>
+            <a href="https://github.com/itspablosiu" target="_blank" rel="noopener noreferrer" class="btn btn-gh"><i class="fab fa-github"></i><span>GH</span></a>
+            <a href="#" onclick="copyDiscord(event)" class="btn btn-dsc"><i class="fab fa-discord"></i><span>DSC</span></a>
+            <a href="https://steamcommunity.com/id/clcv/" target="_blank" rel="noopener noreferrer" class="btn btn-stm"><i class="fab fa-steam"></i><span>STM</span></a>
+            <a href="https://x.com/pablosiu_" target="_blank" rel="noopener noreferrer" class="btn btn-x"><i class="fab fa-x-twitter"></i><span>X</span></a>
+            <a href="https://twitch.tv/clcv_" target="_blank" rel="noopener noreferrer" class="btn btn-ttv"><i class="fab fa-twitch"></i><span>TTV</span></a>
         </div>
 
         <div id="spotify">
@@ -59,7 +65,7 @@
                 <div class="bar"></div>
                 <div class="bar"></div>
             </div>
-            <span id="track-name">SŁUCHAM TERAZ</span>
+            <span id="track-name">NOW PLAYING</span>
         </div>
     </div>
 
@@ -70,11 +76,11 @@
             document.getElementById('backBtn').classList.add('visible');
 
             const video = document.getElementById('bgVideo');
-            video.play().catch(() => console.log("Video autoplay blocked or video missing"));
+            video.play().catch(() => console.log("Video blocked"));
 
             const audio = document.getElementById('bgMusic');
             audio.volume = 0.3;
-            audio.play().catch(() => console.log("Audio play blocked by browser"));
+            audio.play().catch(() => console.log("Audio blocked"));
         }
 
         const DISCORD_ID = "789133178144030737";
@@ -112,10 +118,8 @@
             navigator.clipboard.writeText('xrxwastaken').then(() => {
                 const toast = document.getElementById('copy-toast');
                 toast.classList.add('show');
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 3000);
-            }).catch(err => console.error('Błąd kopiowania: ', err));
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            }).catch(err => console.error('Błąd: ', err));
         }
 
         update();
