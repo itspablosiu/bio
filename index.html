@@ -17,17 +17,6 @@
     <!-- Efekt linii skanujących CRT dla klimatu retro-anime -->
     <div class="crt-lines"></div>
 
-    <!-- OBAWIANY MINI PLAYER AUDIO (Prawy górny róg) -->
-    <div class="anime-player" id="audioPlayer">
-        <button onclick="togglePlay()" title="Play/Pause">
-            <i class="fas fa-pause" id="playIcon"></i>
-        </button>
-        <div class="player-divider"></div>
-        <button onclick="toggleMute()" title="Mute/Unmute">
-            <i class="fas fa-volume-up" id="muteIcon"></i>
-        </button>
-    </div>
-
     <div id="copy-toast" class="copy-notification">
         <i class="fas fa-comment-dots"></i> DISCORD COPIED!
     </div>
@@ -45,6 +34,18 @@
     </audio>
 
     <div class="main-wrapper" id="content">
+        
+        <!-- PLAYER PRZENIESIONY TUTAJ - DO ŚRODKA KARTY, ŻEBY WYSTAWAŁ Z BOKU -->
+        <div class="anime-player" id="audioPlayer">
+            <button onclick="togglePlay()" title="Play/Pause">
+                <i class="fas fa-pause" id="playIcon"></i>
+            </button>
+            <div class="player-divider"></div>
+            <button onclick="toggleMute()" title="Mute/Unmute">
+                <i class="fas fa-volume-up" id="muteIcon"></i>
+            </button>
+        </div>
+
         <div class="profile-header">
             <div class="av-box">
                 <img src="avatar.png" id="av" alt="Avatar">
@@ -82,8 +83,7 @@
         function startExperience() {
             document.getElementById('overlay').classList.add('hidden');
             document.getElementById('content').classList.add('visible');
-            document.getElementById('backBtn').classList.add('visible');
-            document.getElementById('audioPlayer').classList.add('visible'); // Pokazuje player
+            document.getElementById('audioPlayer').classList.add('visible'); 
 
             const video = document.getElementById('bgVideo');
             video.play().catch(() => console.log("Video blocked"));
