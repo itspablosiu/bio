@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xarex</title>
+    
+    <!-- Ikony i Fonty -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Główny plik ze stylami -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <a href="https://nalogowiec.pl/" class="back-home" id="backBtn">
+        <i class="fas fa-arrow-left"></i> POWRÓT
+    </a>
+
+    <div id="copy-toast" class="copy-notification">
+        <i class="fas fa-check-circle"></i> SKOPIOWANO TAG!
+    </div>
+
+    <div id="overlay" onclick="startExperience()">
+        <span>[ KLIKNIJ ]</span>
+    </div>
+
+    <video muted loop playsinline id="bgVideo">
+        <source src="bg.mp4" type="video/mp4">
+    </video>
+
+    <audio id="bgMusic" loop>
+        <source src="background.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="main-wrapper" id="content">
+        <div class="profile-header">
+            <div class="av-box">
+                <img src="avatar.png" id="av" alt="Avatar">
+            </div>
+            <h1 class="name">Pablosiu</h1>
+            <p class="loc">Purpur to cwel</p>
+        </div>
+
+        <div class="social-grid">
+            <a href="https://youtube.com/@xrxwastaken" target="_blank" rel="noopener noreferrer" class="btn"><i class="fab fa-youtube"></i><span>YT</span></a>
+            <a href="https://instagram.com/pawissek" target="_blank" rel="noopener noreferrer" class="btn"><i class="fab fa-instagram"></i><span>IG</span></a>
+            <a href="https://github.com/itspablosiu" target="_blank" rel="noopener noreferrer" class="btn"><i class="fab fa-github"></i><span>GH</span></a>
+            <a href="#" onclick="copyDiscord(event)" class="btn"><i class="fab fa-discord"></i><span>DSC</span></a>
+            <a href="https://steamcommunity.com/id/clcv/" target="_blank" rel="noopener noreferrer" class="btn"><i class="fab fa-steam"></i><span>STM</span></a>
+            <a href="https://x.com/pablosiu_" target="_blank" rel="noopener noreferrer" class="btn"><i class="fab fa-x-twitter"></i><span>X</span></a>
+            <a href="https://twitch.tv/clcv_" target="_blank" rel="noopener noreferrer" class="btn"><i class="fab fa-twitch"></i><span>TTV</span></a>
+        </div>
+
+        <div id="spotify">
+            <div class="eq-container">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+            <span id="track-name">SŁUCHAM TERAZ</span>
+        </div>
+    </div>
+
+    <script>
+        function startExperience() {
+            document.getElementById('overlay').classList.add('hidden');
+            document.getElementById('content').classList.add('visible');
+            document.getElementById('backBtn').classList.add('visible');
+
+            const video = document.getElementById('bgVideo');
+            video.play().catch(() => console.log("Video autoplay blocked or video missing"));
+
+            const audio = document.getElementById('bgMusic');
+            audio.volume = 0.3;
+            audio.play().catch(() => console.log("Audio play blocked by browser"));
+        }
+
+        const DISCORD_ID = "789133178144030737";
+        const LFM_USER = "arkadivsz";
+        const LFM_API_KEY = "0d22a6285362338637e9fe9eb97a1fd0";
+
+        async function update() {
+            try {
+                const r = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
+                const { data } = await r.json();
+                if(data?.discord_user?.avatar) {
+                    document.getElementById('av').src = `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.webp?size=256`;
+                }
+            } catch {}
+
+            try {
+                const r = await fetch(`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LFM_USER}&api_key=${LFM_API_KEY}&format=json&limit=1`);
+                const data = await r.json();
+                const track = data?.recenttracks?.track?.[0];
+                const isPlaying = track?.['@attr']?.nowplaying === 'true';
+
+                const sp = document.getElementById('spotify');
+                if(isPlaying && track) {
+                    sp.style.display = 'flex';
+                    document.getElementById('track-name').innerText = `${track.artist['#text']} - ${track.name}`.toUpperCase();
+                } else {
+                    sp.style.display = 'none';
+                }
+            } catch {}
+        }
+
+        function copyDiscord(event) {
+            if (event) event.preventDefault();
+            
+            navigator.clipboard.writeText('xrxwastaken').then(() => {
+                const toast = document.getElementById('copy-toast');
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }).catch(err => console.error('Błąd kopiowania: ', err));
+        }
+
+        update();
+        setInterval(update, 20000);
+    </script>
+</body>
+</html>
