@@ -9,12 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Plus+Jakarta+Sans:wght@400;800&display=swap" rel="stylesheet">
     
     <style>
-        /* --- MANGA & CYBERPUNK THEME --- */
+        /* --- DARLING IN THE FRANXX THEME COLORS --- */
         :root {
-            --bg-dark: #0d0c10;
-            --anime-pink: #ff2a74;
-            --anime-cyan: #00f0ff;
-            --anime-purple: #7000ff;
+            --bg-dark: #0c0d12;
+            --anime-pink: #ff1f44;   /* Krwista czerwień Zero Two */
+            --anime-cyan: #00e5ff;   /* Neonowy błękit z mecha / Hiro */
+            --anime-purple: #ffffff; /* Ostra, kontrastowa biel Strelizii */
             --font-manga: 'Bangers', cursive;
             --font-clean: 'Plus Jakarta Sans', sans-serif;
         }
@@ -36,7 +36,7 @@
             font-family: var(--font-clean);
         }
 
-        /* --- RETRO CRT LINES (ZOPTYMALIZOWANE - lżejsze dla procesora) --- */
+        /* --- RETRO CRT LINES (Lekkie dla procesora, brak lagów) --- */
         .crt-lines {
             position: fixed;
             inset: 0;
@@ -46,11 +46,11 @@
             pointer-events: none;
         }
 
-        /* --- OVERLAY INTERFEJSU (Usunięto blur, który zabijał FPS-y) --- */
+        /* --- OVERLAY INTERFEJSU (Usunięto ciężki blur, 60 FPS zagwarantowane) --- */
         #overlay {
             position: fixed;
             inset: 0;
-            background: #0d0c10; /* Czysty kolor zamiast przezroczystości z blurem */
+            background: #0c0d12;
             z-index: 9999;
             display: flex;
             justify-content: center;
@@ -68,7 +68,7 @@
             font-family: var(--font-manga);
             font-size: 32px;
             color: var(--anime-pink);
-            text-shadow: 3px 3px 0px #000, 0 0 20px rgba(255, 42, 116, 0.6);
+            text-shadow: 3px 3px 0px #000, 0 0 20px rgba(255, 31, 68, 0.6);
             letter-spacing: 3px;
         }
         .anime-pulse { animation: glitchPulse 1.5s infinite steps(2); }
@@ -98,9 +98,9 @@
             align-items: center;
             width: 90%;
             max-width: 500px;
-            background: rgba(13, 12, 16, 0.95);
+            background: rgba(12, 13, 18, 0.95);
             border: 4px solid #000;
-            box-shadow: 12px 12px 0px rgba(112, 0, 255, 0.5);
+            box-shadow: 12px 12px 0px rgba(255, 255, 255, 0.15); /* Biały, delikatny cień cyber-interfejsu */
             padding: 40px 30px;
             opacity: 0;
             transform: scale(0.95) rotate(-1deg);
@@ -111,16 +111,24 @@
         /* --- PROFIL --- */
         .profile-header { text-align: center; margin-bottom: 30px; width: 100%; }
         .av-box { position: relative; width: 120px; height: 120px; margin: 0 auto 20px; }
-        .av-box img { width: 100%; height: 100%; object-fit: cover; border: 4px solid #000; box-shadow: 5px 5px 0px var(--anime-pink); }
+        
+        /* Czerwona, drapieżna ramka awatara pod Zero Two */
+        .av-box img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            border: 4px solid #000; 
+            box-shadow: 5px 5px 0px var(--anime-pink); 
+        }
         .av-badge { position: absolute; bottom: -5px; right: -10px; background: #ffff00; color: #000; font-family: var(--font-manga); font-size: 11px; padding: 2px 8px; border: 2px solid #000; transform: rotate(8deg); z-index: 2; }
 
-        .name { font-family: var(--font-manga); font-size: 55px; color: white; text-shadow: 4px 4px 0px var(--anime-purple), 7px 7px 0px #000; letter-spacing: 2px; line-height: 1; margin-bottom: 5px; }
+        .name { font-family: var(--font-manga); font-size: 55px; color: white; text-shadow: 4px 4px 0px var(--anime-pink), 7px 7px 0px #000; letter-spacing: 2px; line-height: 1; margin-bottom: 5px; }
         .loc-badge { background: #000; padding: 6px 15px; display: inline-block; transform: skewX(-15deg); border-left: 4px solid var(--anime-cyan); }
         .loc { color: var(--anime-cyan); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; transform: skewX(15deg); }
 
         /* --- SOCIAL GRID --- */
         .social-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; }
-        .btn { width: calc(25% - 12px); aspect-ratio: 1/1; background: #131217; border: 3px solid #000; display: flex; flex-direction: column; justify-content: center; align-items: center; text-decoration: none; color: white; position: relative; transition: transform 0.1s ease, background-color 0.1s ease; }
+        .btn { width: calc(25-12px); width: calc(25% - 12px); aspect-ratio: 1/1; background: #13151e; border: 3px solid #000; display: flex; flex-direction: column; justify-content: center; align-items: center; text-decoration: none; color: white; position: relative; transition: transform 0.1s ease, background-color 0.1s ease; }
 
         @media (max-width: 440px) { .btn { width: calc(33.33% - 10px); } }
         .btn i { font-size: 24px; margin-bottom: 6px; z-index: 2; }
@@ -131,7 +139,7 @@
 
         .btn-yt:hover { background: #FF0000; box-shadow: 4px 4px 0 #ffff00; border-color: #000; }
         .btn-ig:hover { background: var(--anime-pink); box-shadow: 4px 4px 0 var(--anime-cyan); border-color: #000; }
-        .btn-gh:hover { background: #fff; box-shadow: 4px 4px 0 var(--anime-purple); border-color: #000; }
+        .btn-gh:hover { background: #fff; box-shadow: 4px 4px 0 var(--anime-pink); border-color: #000; }
         .btn-dsc:hover { background: #5865F2; box-shadow: 4px 4px 0 #ffff00; border-color: #000; }
         .btn-stm:hover { background: var(--anime-cyan); box-shadow: 4px 4px 0 var(--anime-pink); border-color: #000; }
         .btn-x:hover { background: #fff; box-shadow: 4px 4px 0 #000; border-color: #000; }
@@ -148,7 +156,7 @@
         #track-name { transform: skewX(8deg); }
 
         /* --- TOAST --- */
-        .copy-notification { position: fixed; bottom: 30px; right: 30px; background: var(--anime-purple); border: 3px solid #000; box-shadow: 5px 5px 0px #ffff00; color: white; padding: 12px 24px; font-family: var(--font-manga); font-size: 18px; letter-spacing: 1px; z-index: 10000; transform: translateY(200%) skewX(-10deg); transition: transform 0.2s ease; display: flex; align-items: center; gap: 10px; }
+        .copy-notification { position: fixed; bottom: 30px; right: 30px; background: var(--anime-pink); border: 3px solid #000; box-shadow: 5px 5px 0px #ffff00; color: white; padding: 12px 24px; font-family: var(--font-manga); font-size: 18px; letter-spacing: 1px; z-index: 10000; transform: translateY(200%) skewX(-10deg); transition: transform 0.2s ease; display: flex; align-items: center; gap: 10px; }
         .copy-notification.show { transform: translateY(0) skewX(-10deg); }
         .copy-notification i { color: #ffff00; }
 
@@ -177,7 +185,7 @@
         }
         .anime-player button:hover { color: var(--anime-cyan); }
 
-        /* PC View */
+        /* 💻 Układ PC: Odtwarzacz z boku, pionowy panel mecha */
         @media (min-width: 769px) {
             .anime-player {
                 position: absolute;
@@ -191,7 +199,7 @@
             .player-divider { width: 18px; height: 3px; background: var(--anime-pink); margin: 4px 0; }
         }
 
-        /* Mobile View */
+        /* 📱 Układ Telefon: Poziomy pasek nad awatarem */
         @media (max-width: 768px) {
             .anime-player {
                 position: relative;
@@ -276,18 +284,16 @@
         const video = document.getElementById('bgVideo');
 
         function startExperience() {
-            // Natychmiast ukrywamy overlay, żeby odblokować interfejs
             document.getElementById('overlay').classList.add('hidden');
             document.getElementById('content').classList.add('visible');
 
-            // Odpalanie wideo i audio opakowane w try-catch, by żaden błąd nie zaciął skryptu
             if (video) {
-                video.play().catch(e => console.log("Video playback delayed:", e));
+                video.play().catch(e => console.log("Video delayed:", e));
             }
 
             if (audio) {
                 audio.volume = 0.3;
-                audio.play().catch(e => console.log("Audio playback delayed:", e));
+                audio.play().catch(e => console.log("Audio delayed:", e));
             }
         }
 
@@ -335,7 +341,7 @@
                     sp.style.display = 'none';
                 }
             } catch(err) {
-                console.log("LastFM error ignored");
+                console.log("LastFM skipped");
             }
         }
 
@@ -350,7 +356,6 @@
             });
         }
 
-        // Bezpieczne uruchomienie widgetu Spotify
         if(LFM_USER && LFM_API_KEY) {
             updateSpotify();
             setInterval(updateSpotify, 20000);
