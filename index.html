@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>xarexowa stronka bo czemu nie</title>
     
+    <!-- Google Fonts & FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     
@@ -136,7 +137,6 @@
             height: 140px;
             margin-bottom: 20px;
         }
-        /* Naprawiony selektor dla ramki awatara */
         .avatar-frame::before {
             content: '';
             position: absolute;
@@ -210,6 +210,7 @@
             grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
             gap: 12px;
             width: 100%;
+            margin-bottom: 15px;
         }
 
         .hud-btn {
@@ -248,15 +249,41 @@
         .hud-btn:hover i { transform: scale(1.15); color: var(--franxx-blue); }
         .hud-btn:hover::after { border-color: transparent transparent var(--franxx-blue) transparent; }
 
-        /* --- MEDIA BAR --- */
+        /* --- SPOTIFY WIDGET --- */
+        #spotify-hud {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 229, 255, 0.08);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-left: 4px solid var(--franxx-blue);
+            padding: 8px 15px;
+            font-size: 11px;
+            letter-spacing: 1px;
+            width: 100%;
+            margin-bottom: 15px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .live-pulse {
+            width: 6px;
+            height: 6px;
+            background: var(--franxx-blue);
+            border-radius: 50%;
+            flex-shrink: 0;
+            animation: pulseGlow 1s infinite alternate;
+        }
+        @keyframes pulseGlow { from { opacity: 0.3; } to { opacity: 1; } }
+
+        /* --- DOLNY PANEL MEDIA CONTROLS --- */
         .hud-media-bar {
-            margin-top: 25px;
             border-top: 1px solid rgba(255,255,255,0.1);
             padding-top: 15px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 10px;
+            justify-content: flex-end;
+            width: 100%;
         }
 
         .hud-player-controls { display: flex; gap: 8px; }
@@ -276,27 +303,6 @@
             color: #000;
             border-color: var(--franxx-red);
         }
-
-        #spotify-hud {
-            display: none;
-            align-items: center;
-            gap: 10px;
-            background: rgba(0, 229, 255, 0.1);
-            border-left: 3px solid var(--franxx-blue);
-            padding: 6px 12px;
-            font-size: 11px;
-            max-width: 60%;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-        .live-pulse {
-            width: 6px;
-            height: 6px;
-            background: var(--franxx-blue);
-            border-radius: 50%;
-            animation: pulseGlow 1s infinite alternate;
-        }
-        @keyframes pulseGlow { from { opacity: 0.3; } to { opacity: 1; } }
 
         /* --- NOTYFIKATOR SYSTEMOWY --- */
         .hud-toast {
@@ -323,6 +329,7 @@
 
     <div id="toast" class="hud-toast">SYSTEM_MSG: DISCORD_COPIED</div>
 
+    <!-- EKRAN SYNCU -->
     <div id="gateway" onclick="connectToFranxx()">
         <div class="gateway-title">CONNECT TO FRANXX</div>
         <div class="gateway-sub">Click to initiate pilot synchronization</div>
@@ -330,24 +337,27 @@
 
     <video id="bgVideo" loop muted playsinline>
         <source src="02/background.mp4" type="video/mp4">
-        </video>
+    </video>
     <img src="02/background.png" id="bgImage" alt="Background">
 
     <audio id="bgMusic" loop>
         <source src="02/background.mp3" type="audio/mpeg">
     </audio>
 
+    <!-- GŁÓWNA STRUKTURA HUD -->
     <div class="hud-container" id="hudFrame">
         
+        <!-- LEWY PANEL: PILOT PROFILE -->
         <div class="hud-pilot-panel">
             <div class="avatar-frame">
                 <img src="02/avatar.png" alt="Pilot Avatar">
             </div>
-            <div class="pilot-code">CODE: 016</div>
-            <div class="pilot-name">Pablosiu</div>
+            <div class="pilot-code">CODE: 002</div>
+            <div class="pilot-name">xarex</div>
             <div class="status-badge">Purpur to cwel</div>
         </div>
 
+        <!-- PRAWY PANEL: MATRYCA SYSTEMOWA -->
         <div class="hud-main-panel">
             <div>
                 <div class="panel-title-hud">
@@ -364,14 +374,16 @@
                     <a href="https://x.com/pablosiu_" target="_blank" rel="noopener noreferrer" class="hud-btn"><i class="fab fa-x-twitter"></i><span>X / TWITTER</span></a>
                     <a href="https://twitch.tv/clcv_" target="_blank" rel="noopener noreferrer" class="hud-btn"><i class="fab fa-twitch"></i><span>TWITCH</span></a>
                 </div>
-            </div>
 
-            <div class="hud-media-bar">
+                <!-- PRZENIESIONY WIDGET SPOTIFY -->
                 <div id="spotify-hud">
                     <div class="live-pulse"></div>
                     <span id="track-string">HUD_IDLE</span>
                 </div>
-                
+            </div>
+
+            <!-- DOLNY PANEL: MEDIA CONTROLS -->
+            <div class="hud-media-bar">
                 <div class="hud-player-controls">
                     <button onclick="triggerAudio()"><i class="fas fa-pause" id="playIcon"></i> PLAY</button>
                     <button onclick="triggerMute()"><i class="fas fa-volume-up" id="muteIcon"></i> MUTE</button>
