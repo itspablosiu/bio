@@ -5,203 +5,295 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>xarex</title>
     
+    <!-- Google Fonts & FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Plus+Jakarta+Sans:wght@400;800&display=swap" rel="stylesheet">
     
     <style>
-        /* --- DARLING IN THE FRANXX THEME COLORS --- */
+        /* --- BRANDING: DARLING IN THE FRANXX --- */
         :root {
-            --bg-dark: #0c0d12;
-            --anime-pink: #ff1f44;   /* Krwista czerwień Zero Two */
-            --anime-cyan: #00e5ff;   /* Neonowy błękit z mecha / Hiro */
-            --anime-purple: #ffffff; /* Ostra, kontrastowa biel Strelizii */
-            --font-manga: 'Bangers', cursive;
-            --font-clean: 'Plus Jakarta Sans', sans-serif;
+            --bg-dark: #0a0b10;
+            --franxx-red: #ff1f44;   /* Krwista czerwień Zero Two */
+            --franxx-blue: #00e5ff;  /* Neonowy błękit Hiro / Strelizia */
+            --franxx-white: #ffffff; /* Czysta biel kokpitu */
+            
+            --font-display: 'Bangers', cursive;
+            --font-base: 'Plus Jakarta Sans', sans-serif;
         }
 
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
+        /* --- BASE SYSTEM RESET --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            background: var(--bg-dark);
-            color: white;
+            background-color: var(--bg-dark);
+            color: var(--franxx-white);
+            font-family: var(--font-base);
             height: 100vh;
+            width: 100vw;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            font-family: var(--font-clean);
         }
 
-        /* --- RETRO CRT LINES (Lekkie dla procesora, brak lagów) --- */
-        .crt-lines {
-            position: fixed;
-            inset: 0;
-            z-index: 10;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
-            background-size: 100% 4px;
-            pointer-events: none;
-        }
-
-        /* --- OVERLAY INTERFEJSU (Usunięto ciężki blur, 60 FPS zagwarantowane) --- */
-        #overlay {
-            position: fixed;
-            inset: 0;
-            background: #0c0d12;
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            border: 10px solid #000;
-            opacity: 1;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
-        }
-        #overlay.hidden { 
-            opacity: 0; 
-            visibility: hidden; 
-        }
-        #overlay span {
-            font-family: var(--font-manga);
-            font-size: 32px;
-            color: var(--anime-pink);
-            text-shadow: 3px 3px 0px #000, 0 0 20px rgba(255, 31, 68, 0.6);
-            letter-spacing: 3px;
-        }
-        .anime-pulse { animation: glitchPulse 1.5s infinite steps(2); }
-
-        @keyframes glitchPulse {
-            0%, 100% { transform: scale(1) skewX(-5deg); color: var(--anime-pink); }
-            50% { transform: scale(1.02) skewX(5deg); color: var(--anime-cyan); text-shadow: -3px -3px 0px #000; }
-        }
-
-        /* --- BG VIDEO --- */
+        /* --- BACKGROUND STREAMING VIDEO --- */
         #bgVideo {
             position: fixed;
             inset: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
             object-fit: cover;
-            filter: brightness(0.35) saturate(1.3);
+            z-index: 1;
+            filter: brightness(0.3) saturate(1.2);
         }
 
-        /* --- KONTENER GŁÓWNY (KARTA) --- */
-        .main-wrapper {
-            position: relative;
-            z-index: 5;
+        /* --- LIGHT CRT OVERLAY EFFECT --- */
+        .crt-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+
+        /* --- INTERFACE TOAST --- */
+        .toast-notification {
+            position: fixed;
+            bottom: -100px;
+            right: 30px;
+            background: var(--franxx-red);
+            border: 3px solid #000;
+            box-shadow: 5px 5px 0px var(--franxx-white);
+            color: var(--franxx-white);
+            padding: 12px 24px;
+            font-family: var(--font-display);
+            font-size: 18px;
+            letter-spacing: 1px;
+            z-index: 999;
+            transform: skewX(-10deg);
+            transition: bottom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+        }
+        .toast-notification.active {
+            bottom: 30px;
+        }
+
+        /* --- SECURITY GATE (OVERLAY) --- */
+        #gateway {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-dark);
+            z-index: 9999;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
+            cursor: pointer;
+            border: 8px solid #000;
+        }
+        #gateway.hide {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        .gateway-prompt {
+            font-family: var(--font-display);
+            font-size: 36px;
+            color: var(--franxx-red);
+            text-shadow: 3px 3px 0px #000, 0 0 15px rgba(255, 31, 68, 0.5);
+            letter-spacing: 2px;
+            animation: pulseSync 1.2s infinite steps(2);
+        }
+
+        @keyframes pulseSync {
+            0%, 100% { transform: scale(1) skewX(-5deg); color: var(--franxx-red); }
+            50% { transform: scale(1.03) skewX(5deg); color: var(--franxx-blue); text-shadow: -3px -3px 0px #000; }
+        }
+
+        /* --- THE CENTRAL UNIT (MAIN CARD) --- */
+        .profile-card {
+            position: relative;
+            z-index: 10;
             width: 90%;
-            max-width: 500px;
-            background: rgba(12, 13, 18, 0.95);
+            max-width: 480px;
+            background: rgba(10, 11, 16, 0.95);
             border: 4px solid #000;
-            box-shadow: 12px 12px 0px rgba(255, 255, 255, 0.15); /* Biały, delikatny cień cyber-interfejsu */
+            box-shadow: 12px 12px 0px rgba(255, 255, 255, 0.1);
             padding: 40px 30px;
             opacity: 0;
-            transform: scale(0.95) rotate(-1deg);
+            transform: scale(0.95);
             transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .main-wrapper.visible { opacity: 1; transform: scale(1) rotate(0deg); }
-
-        /* --- PROFIL --- */
-        .profile-header { text-align: center; margin-bottom: 30px; width: 100%; }
-        .av-box { position: relative; width: 120px; height: 120px; margin: 0 auto 20px; }
-        
-        /* Czerwona, drapieżna ramka awatara pod Zero Two */
-        .av-box img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            border: 4px solid #000; 
-            box-shadow: 5px 5px 0px var(--anime-pink); 
+        .profile-card.active {
+            opacity: 1;
+            transform: scale(1);
         }
-        .av-badge { position: absolute; bottom: -5px; right: -10px; background: #ffff00; color: #000; font-family: var(--font-manga); font-size: 11px; padding: 2px 8px; border: 2px solid #000; transform: rotate(8deg); z-index: 2; }
 
-        .name { font-family: var(--font-manga); font-size: 55px; color: white; text-shadow: 4px 4px 0px var(--anime-pink), 7px 7px 0px #000; letter-spacing: 2px; line-height: 1; margin-bottom: 5px; }
-        .loc-badge { background: #000; padding: 6px 15px; display: inline-block; transform: skewX(-15deg); border-left: 4px solid var(--anime-cyan); }
-        .loc { color: var(--anime-cyan); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; transform: skewX(15deg); }
+        /* --- HEADER NODE --- */
+        .card-header {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+        .avatar-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+        }
+        .avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: 4px solid #000;
+            box-shadow: 5px 5px 0px var(--franxx-red);
+        }
+        .avatar-status {
+            position: absolute;
+            bottom: -5px;
+            right: -12px;
+            background: #ffff00;
+            color: #000;
+            font-family: var(--font-display);
+            font-size: 12px;
+            padding: 2px 10px;
+            border: 2px solid #000;
+            transform: rotate(6deg);
+            z-index: 2;
+        }
 
-        /* --- SOCIAL GRID --- */
-        .social-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; }
-        .btn { width: calc(25-12px); width: calc(25% - 12px); aspect-ratio: 1/1; background: #13151e; border: 3px solid #000; display: flex; flex-direction: column; justify-content: center; align-items: center; text-decoration: none; color: white; position: relative; transition: transform 0.1s ease, background-color 0.1s ease; }
+        .username {
+            font-family: var(--font-display);
+            font-size: 56px;
+            color: var(--franxx-white);
+            text-shadow: 4px 4px 0px var(--franxx-red), 7px 7px 0px #000;
+            letter-spacing: 2px;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        .sub-tag-box {
+            background: #000;
+            padding: 6px 16px;
+            display: inline-block;
+            transform: skewX(-15deg);
+            border-left: 4px solid var(--franxx-blue);
+        }
+        .sub-tag-text {
+            color: var(--franxx-blue);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transform: skewX(15deg);
+        }
 
-        @media (max-width: 440px) { .btn { width: calc(33.33% - 10px); } }
-        .btn i { font-size: 24px; margin-bottom: 6px; z-index: 2; }
-        .btn span { font-family: var(--font-manga); font-size: 14px; letter-spacing: 0.5px; z-index: 2; color: #fff; }
+        /* --- GRID CORE (SOCIAL BUTTONS) --- */
+        .social-matrix {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 14px;
+            width: 100%;
+        }
+        .matrix-btn {
+            width: calc(25% - 11px);
+            aspect-ratio: 1 / 1;
+            background: #12141c;
+            border: 3px solid #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: var(--franxx-white);
+            transition: transform 0.1s ease, background-color 0.1s ease;
+        }
 
-        .btn:hover { color: #000; transform: translate(-4px, -4px); }
-        .btn:hover span { color: #000; }
+        @media (max-width: 440px) {
+            .matrix-btn { width: calc(33.33% - 10px); }
+        }
+
+        .matrix-btn i { font-size: 24px; margin-bottom: 6px; z-index: 2; }
+        .matrix-btn span { font-family: var(--font-display); font-size: 14px; letter-spacing: 0.5px; z-index: 2; }
+
+        .matrix-btn:hover { color: #000; transform: translate(-4px, -4px); }
 
         .btn-yt:hover { background: #FF0000; box-shadow: 4px 4px 0 #ffff00; border-color: #000; }
-        .btn-ig:hover { background: var(--anime-pink); box-shadow: 4px 4px 0 var(--anime-cyan); border-color: #000; }
-        .btn-gh:hover { background: #fff; box-shadow: 4px 4px 0 var(--anime-pink); border-color: #000; }
+        .btn-ig:hover { background: var(--franxx-red); box-shadow: 4px 4px 0 var(--franxx-blue); border-color: #000; }
+        .btn-gh:hover { background: var(--franxx-white); box-shadow: 4px 4px 0 var(--franxx-red); border-color: #000; }
         .btn-dsc:hover { background: #5865F2; box-shadow: 4px 4px 0 #ffff00; border-color: #000; }
-        .btn-stm:hover { background: var(--anime-cyan); box-shadow: 4px 4px 0 var(--anime-pink); border-color: #000; }
-        .btn-x:hover { background: #fff; box-shadow: 4px 4px 0 #000; border-color: #000; }
-        .btn-ttv:hover { background: #9146FF; box-shadow: 4px 4px 0 var(--anime-cyan); border-color: #000; }
+        .btn-stm:hover { background: var(--franxx-blue); box-shadow: 4px 4px 0 var(--franxx-red); border-color: #000; }
+        .btn-x:hover { background: var(--franxx-white); box-shadow: 4px 4px 0 #000; border-color: #000; }
+        .btn-ttv:hover { background: #9146FF; box-shadow: 4px 4px 0 var(--franxx-blue); border-color: #000; }
 
-        /* --- WIDGET SPOTIFY --- */
-        #spotify { margin-top: 30px; background: #ffff00; color: #000; border: 3px solid #000; box-shadow: 5px 5px 0px var(--anime-pink); padding: 8px 16px; font-family: var(--font-manga); font-size: 15px; letter-spacing: 1px; display: none; align-items: center; gap: 12px; transform: skewX(-8deg); }
-        .eq-container { display: flex; align-items: flex-end; gap: 3px; width: 14px; height: 14px; transform: skewX(8deg); }
-        .bar { width: 3px; height: 100%; background: #000; animation: musicAnime 0.6s steps(4) infinite alternate; transform-origin: bottom; }
-        .bar:nth-child(2) { animation-delay: 0.15s; }
-        .bar:nth-child(3) { animation-delay: 0.30s; }
+        /* --- SOUNDTRACK NODE (SPOTIFY) --- */
+        #spotify-node {
+            margin-top: 35px;
+            background: #ffff00;
+            color: #000;
+            border: 3px solid #000;
+            box-shadow: 5px 5px 0px var(--franxx-red);
+            padding: 8px 16px;
+            font-family: var(--font-display);
+            font-size: 15px;
+            letter-spacing: 1px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            transform: skewX(-8deg);
+        }
+        .eq-bars { display: flex; align-items: flex-end; gap: 3px; width: 14px; height: 14px; transform: skewX(8deg); }
+        .eq-bar { width: 3px; height: 100%; background: #000; animation: audioJump 0.6s steps(4) infinite alternate; transform-origin: bottom; }
+        .eq-bar:nth-child(2) { animation-delay: 0.15s; }
+        .eq-bar:nth-child(3) { animation-delay: 0.30s; }
 
-        @keyframes musicAnime { from { transform: scaleY(0.2); } to { transform: scaleY(1); } }
-        #track-name { transform: skewX(8deg); }
+        @keyframes audioJump { from { transform: scaleY(0.2); } to { transform: scaleY(1); } }
+        #track-string { transform: skewX(8deg); }
 
-        /* --- TOAST --- */
-        .copy-notification { position: fixed; bottom: 30px; right: 30px; background: var(--anime-pink); border: 3px solid #000; box-shadow: 5px 5px 0px #ffff00; color: white; padding: 12px 24px; font-family: var(--font-manga); font-size: 18px; letter-spacing: 1px; z-index: 10000; transform: translateY(200%) skewX(-10deg); transition: transform 0.2s ease; display: flex; align-items: center; gap: 10px; }
-        .copy-notification.show { transform: translateY(0) skewX(-10deg); }
-        .copy-notification i { color: #ffff00; }
-
-        /* --- RESPONSIVE AUDIO PLAYER --- */
-        .anime-player {
+        /* --- FRANXX COCKPIT MEDIA MODULE (AUDIO PLAYER) --- */
+        .franxx-player {
             z-index: 100;
             display: flex;
-            background: #0d0c10;
-            border: 3px solid var(--anime-pink);
-            box-shadow: 4px 4px 0px var(--anime-purple);
+            background: var(--bg-dark);
+            border: 3px solid var(--franxx-red);
+            box-shadow: 4px 4px 0px var(--franxx-white);
             padding: 4px;
             opacity: 0;
             transition: opacity 0.4s ease;
         }
+        .profile-card.active .franxx-player { opacity: 1; }
 
-        .main-wrapper.visible .anime-player { opacity: 1; }
-
-        .anime-player button {
+        .franxx-player button {
             background: none;
             border: none;
-            color: #fff;
+            color: var(--franxx-white);
             font-size: 16px;
             padding: 10px;
             cursor: pointer;
             transition: color 0.15s ease, transform 0.15s ease;
         }
-        .anime-player button:hover { color: var(--anime-cyan); }
+        .franxx-player button:hover { color: var(--franxx-blue); }
 
-        /* 💻 Układ PC: Odtwarzacz z boku, pionowy panel mecha */
+        /* PC Layout Matrix */
         @media (min-width: 769px) {
-            .anime-player {
+            .franxx-player {
                 position: absolute;
                 top: 45px;
-                right: -60px;
+                right: -62px;
                 flex-direction: column;
                 transform: skewY(-10deg);
             }
-            .anime-player button { transform: skewY(10deg); }
-            .anime-player button:hover { transform: skewY(10deg) scale(1.15); }
-            .player-divider { width: 18px; height: 3px; background: var(--anime-pink); margin: 4px 0; }
+            .franxx-player button { transform: skewY(10deg); }
+            .franxx-player button:hover { transform: skewY(10deg) scale(1.15); }
+            .player-pipe { width: 18px; height: 3px; background: var(--franxx-red); margin: 4px 0; }
         }
 
-        /* 📱 Układ Telefon: Poziomy pasek nad awatarem */
+        /* Mobile Layout Matrix */
         @media (max-width: 768px) {
-            .anime-player {
+            .franxx-player {
                 position: relative;
                 top: 0;
                 right: 0;
@@ -210,22 +302,22 @@
                 transform: skewX(-12deg);
                 width: fit-content;
             }
-            .anime-player button { transform: skewX(12deg); }
-            .anime-player button:hover { transform: skewX(12deg) scale(1.15); }
-            .player-divider { width: 3px; height: 18px; background: var(--anime-pink); margin: 0 4px; }
+            .franxx-player button { transform: skewX(12deg); }
+            .franxx-player button:hover { transform: skewX(12deg) scale(1.15); }
+            .player-pipe { width: 3px; height: 18px; background: var(--franxx-red); margin: 0 4px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="crt-lines"></div>
+    <div class="crt-layer"></div>
 
-    <div id="copy-toast" class="copy-notification">
+    <div id="toast" class="toast-notification">
         <i class="fas fa-comment-dots"></i> DISCORD COPIED!
     </div>
 
-    <div id="overlay" onclick="startExperience()">
-        <span class="anime-pulse">[ A KLIKNIJ SE ]</span>
+    <div id="gateway" onclick="initializeProfile()">
+        <span class="gateway-prompt">[ CONNECT TO FRANXX ]</span>
     </div>
 
     <video muted loop playsinline id="bgVideo">
@@ -236,130 +328,130 @@
         <source src="background.mp3" type="audio/mpeg">
     </audio>
 
-    <div class="main-wrapper" id="content">
+    <div class="profile-card" id="mainCard">
         
-        <div class="anime-player" id="audioPlayer">
-            <button onclick="togglePlay()" title="Play/Pause">
+        <!-- FLUID AUDIO CONTROLLER -->
+        <div class="franxx-player" id="mediaController">
+            <button onclick="controlAudio()" title="Play/Pause">
                 <i class="fas fa-pause" id="playIcon"></i>
             </button>
-            <div class="player-divider"></div>
-            <button onclick="toggleMute()" title="Mute/Unmute">
+            <div class="player-pipe"></div>
+            <button onclick="controlMute()" title="Mute/Unmute">
                 <i class="fas fa-volume-up" id="muteIcon"></i>
             </button>
         </div>
 
-        <div class="profile-header">
-            <div class="av-box">
-                <img src="avatar.png" id="av" alt="Avatar">
-                <div class="av-badge">D0 DOMKU</div>
+        <div class="card-header">
+            <div class="avatar-container">
+                <img src="avatar.png" id="avatarImg" alt="Avatar">
+                <div class="avatar-status">D0 DOMKU</div>
             </div>
-            <h1 class="name">Pablosiu</h1>
-            <div class="loc-badge">
-                <p class="loc">Purpur to cwel</p>
+            <h1 class="username">Pablosiu</h1>
+            <div class="sub-tag-box">
+                <p class="sub-tag-text">Purpur to cwel</p>
             </div>
         </div>
 
-        <div class="social-grid">
-            <a href="https://youtube.com/@xrxwastaken" target="_blank" rel="noopener noreferrer" class="btn btn-yt"><i class="fab fa-youtube"></i><span>YT</span></a>
-            <a href="https://instagram.com/pawissek" target="_blank" rel="noopener noreferrer" class="btn btn-ig"><i class="fab fa-instagram"></i><span>IG</span></a>
-            <a href="https://github.com/itspablosiu" target="_blank" rel="noopener noreferrer" class="btn btn-gh"><i class="fab fa-github"></i><span>GH</span></a>
-            <a href="#" onclick="copyDiscord(event)" class="btn btn-dsc"><i class="fab fa-discord"></i><span>DSC</span></a>
-            <a href="https://steamcommunity.com/id/clcv/" target="_blank" rel="noopener noreferrer" class="btn btn-stm"><i class="fab fa-steam"></i><span>STM</span></a>
-            <a href="https://x.com/pablosiu_" target="_blank" rel="noopener noreferrer" class="btn btn-x"><i class="fab fa-x-twitter"></i><span>X</span></a>
-            <a href="https://twitch.tv/clcv_" target="_blank" rel="noopener noreferrer" class="btn btn-ttv"><i class="fab fa-twitch"></i><span>TTV</span></a>
+        <div class="social-matrix">
+            <a href="https://youtube.com/@xrxwastaken" target="_blank" rel="noopener noreferrer" class="matrix-btn btn-yt"><i class="fab fa-youtube"></i><span>YT</span></a>
+            <a href="https://instagram.com/pawissek" target="_blank" rel="noopener noreferrer" class="matrix-btn btn-ig"><i class="fab fa-instagram"></i><span>IG</span></a>
+            <a href="https://github.com/itspablosiu" target="_blank" rel="noopener noreferrer" class="matrix-btn btn-gh"><i class="fab fa-github"></i><span>GH</span></a>
+            <a href="#" onclick="copyDiscordHandle(event)" class="matrix-btn btn-dsc"><i class="fab fa-discord"></i><span>DSC</span></a>
+            <a href="https://steamcommunity.com/id/clcv/" target="_blank" rel="noopener noreferrer" class="matrix-btn btn-stm"><i class="fab fa-steam"></i><span>STM</span></a>
+            <a href="https://x.com/pablosiu_" target="_blank" rel="noopener noreferrer" class="matrix-btn btn-x"><i class="fab fa-x-twitter"></i><span>X</span></a>
+            <a href="https://twitch.tv/clcv_" target="_blank" rel="noopener noreferrer" class="matrix-btn btn-ttv"><i class="fab fa-twitch"></i><span>TTV</span></a>
         </div>
 
-        <div id="spotify">
-            <div class="eq-container">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
+        <div id="spotify-node">
+            <div class="eq-bars">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
             </div>
-            <span id="track-name">NOW PLAYING</span>
+            <span id="track-string">SYSTEM IDLE</span>
         </div>
     </div>
 
     <script>
-        const audio = document.getElementById('bgMusic');
-        const video = document.getElementById('bgVideo');
+        const musicSystem = document.getElementById('bgMusic');
+        const videoSystem = document.getElementById('bgVideo');
 
-        function startExperience() {
-            document.getElementById('overlay').classList.add('hidden');
-            document.getElementById('content').classList.add('visible');
+        function initializeProfile() {
+            document.getElementById('gateway').classList.add('hide');
+            document.getElementById('mainCard').classList.add('active');
 
-            if (video) {
-                video.play().catch(e => console.log("Video delayed:", e));
+            if (videoSystem) {
+                videoSystem.play().catch(err => console.log("Video track hold:", err));
             }
 
-            if (audio) {
-                audio.volume = 0.3;
-                audio.play().catch(e => console.log("Audio delayed:", e));
+            if (musicSystem) {
+                musicSystem.volume = 0.3;
+                musicSystem.play().catch(err => console.log("Audio track hold:", err));
             }
         }
 
-        function togglePlay() {
-            const icon = document.getElementById('playIcon');
-            if (!audio) return;
+        function controlAudio() {
+            const btnIcon = document.getElementById('playIcon');
+            if (!musicSystem) return;
             
-            if (audio.paused) {
-                audio.play().catch(() => {});
-                icon.className = "fas fa-pause";
+            if (musicSystem.paused) {
+                musicSystem.play().catch(() => {});
+                btnIcon.className = "fas fa-pause";
             } else {
-                audio.pause();
-                icon.className = "fas fa-play";
+                musicSystem.pause();
+                btnIcon.className = "fas fa-play";
             }
         }
 
-        function toggleMute() {
-            const icon = document.getElementById('muteIcon');
-            if (!audio) return;
+        function controlMute() {
+            const btnIcon = document.getElementById('muteIcon');
+            if (!musicSystem) return;
 
-            if (audio.muted) {
-                audio.muted = false;
-                icon.className = "fas fa-volume-up";
+            if (musicSystem.muted) {
+                musicSystem.muted = false;
+                btnIcon.className = "fas fa-volume-up";
             } else {
-                audio.muted = true;
-                icon.className = "fas fa-volume-mute";
+                musicSystem.muted = true;
+                btnIcon.className = "fas fa-volume-mute";
             }
         }
 
-        const LFM_USER = "arkadivsz";
-        const LFM_API_KEY = "0d22a6285362338637e9fe9eb97a1fd0";
+        const LASTFM_TARGET = "arkadivsz";
+        const LASTFM_KEY = "0d22a6285362338637e9fe9eb97a1fd0";
 
-        async function updateSpotify() {
+        async function syncSpotifyData() {
+            if(!LASTFM_TARGET || !LASTFM_KEY) return;
             try {
-                const r = await fetch(`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LFM_USER}&api_key=${LFM_API_KEY}&format=json&limit=1`);
-                const data = await r.json();
-                const track = data?.recenttracks?.track?.[0];
-                const isPlaying = track?.['@attr']?.nowplaying === 'true';
+                const response = await fetch(`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LASTFM_TARGET}&api_key=${LASTFM_KEY}&format=json&limit=1`);
+                const parsed = await response.json();
+                const currentTrack = parsed?.recenttracks?.track?.[0];
+                const activeState = currentTrack?.['@attr']?.nowplaying === 'true';
 
-                const sp = document.getElementById('spotify');
-                if(isPlaying && track) {
-                    sp.style.display = 'flex';
-                    document.getElementById('track-name').innerText = `${track.artist['#text']} - ${track.name}`.toUpperCase();
+                const displayContainer = document.getElementById('spotify-node');
+                if(activeState && currentTrack) {
+                    displayContainer.style.display = 'flex';
+                    document.getElementById('track-string').innerText = `${currentTrack.artist['#text']} - ${currentTrack.name}`.toUpperCase();
                 } else {
-                    sp.style.display = 'none';
+                    displayContainer.style.display = 'none';
                 }
-            } catch(err) {
-                console.log("LastFM skipped");
+            } catch(e) {
+                console.log("Sync error bypassed.");
             }
         }
 
-        function copyDiscord(event) {
-            if (event) event.preventDefault();
+        function copyDiscordHandle(e) {
+            if (e) e.preventDefault();
             navigator.clipboard.writeText('xrxwastaken').then(() => {
-                const toast = document.getElementById('copy-toast');
-                if (toast) {
-                    toast.classList.add('show');
-                    setTimeout(() => toast.classList.remove('show'), 3000);
+                const popNotification = document.getElementById('toast');
+                if (popNotification) {
+                    popNotification.classList.add('active');
+                    setTimeout(() => popNotification.classList.remove('active'), 3000);
                 }
             });
         }
 
-        if(LFM_USER && LFM_API_KEY) {
-            updateSpotify();
-            setInterval(updateSpotify, 20000);
-        }
+        syncSpotifyData();
+        setInterval(syncSpotifyData, 20000);
     </script>
 </body>
 </html>
