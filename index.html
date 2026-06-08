@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>xarexowa stronka bo czemu nie</title>
     
-    <!-- Google Fonts & FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     
@@ -35,17 +34,18 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            position: relative;
         }
 
         /* --- BACKGROUND & CRT --- */
-        #bgVideo {
-            position: fixed;
+        #bgVideo, #bgImage {
+            position: absolute;
             inset: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
             z-index: 1;
-            filter: brightness(0.25) saturate(1.1);
+            filter: brightness(0.35) saturate(1.1);
         }
 
         .crt-hud {
@@ -90,12 +90,12 @@
             text-transform: uppercase;
         }
 
-        /* --- NOWY ASYMETRYCZNY INTERFEJS (KARTA COKPITU) --- */
+        /* --- INTERFEJS HUD --- */
         .hud-container {
             position: relative;
             z-index: 10;
-            width: 95%;
-            max-width: 700px;
+            width: 90%;
+            max-width: 850px;
             display: grid;
             grid-template-columns: 1fr;
             gap: 20px;
@@ -110,13 +110,13 @@
 
         @media (min-width: 768px) {
             .hud-container {
-                grid-template-columns: 240px 1fr;
+                grid-template-columns: 260px 1fr;
             }
         }
 
-        /* --- LEWY PANEL: PILOT PILOT'S DATA --- */
+        /* --- LEWY PANEL: PILOT DATA --- */
         .hud-pilot-panel {
-            background: rgba(13, 15, 22, 0.9);
+            background: rgba(13, 15, 22, 0.85);
             border-left: 5px solid var(--franxx-red);
             border-top: 5px solid var(--franxx-red);
             border-bottom: 2px solid #000;
@@ -127,6 +127,7 @@
             align-items: center;
             position: relative;
             clip-path: polygon(0 0, 100% 0, 100% 85%, 85% 100%, 0 100%);
+            backdrop-filter: blur(5px);
         }
 
         .avatar-frame {
@@ -135,7 +136,7 @@
             height: 140px;
             margin-bottom: 20px;
         }
-        /* Skośne linie dekoracyjne wokół awatara */
+        /* Naprawiony selektor dla ramki awatara */
         .avatar-frame::before {
             content: '';
             position: absolute;
@@ -144,7 +145,7 @@
             clip-path: polygon(0 0, 30% 0, 0 30%, 0 100%, 100% 100%, 100% 0);
             pointer-events: none;
         }
-        .-frame img {
+        .avatar-frame img {
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -179,7 +180,7 @@
 
         /* --- PRAWY PANEL: MATRYCA LINKÓW --- */
         .hud-main-panel {
-            background: rgba(13, 15, 22, 0.9);
+            background: rgba(13, 15, 22, 0.85);
             border-right: 5px solid var(--franxx-blue);
             border-bottom: 5px solid var(--franxx-blue);
             border-top: 2px solid #000;
@@ -189,7 +190,8 @@
             flex-direction: column;
             justify-content: space-between;
             position: relative;
-            clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%, 0 20%);
+            clip-path: polygon(12% 0, 100% 0, 100% 100%, 0 100%, 0 15%);
+            backdrop-filter: blur(5px);
         }
 
         .panel-title-hud {
@@ -203,10 +205,9 @@
             justify-content: space-between;
         }
 
-        /* Nowa, asymetryczna siatka przycisków */
         .hud-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
             gap: 12px;
             width: 100%;
         }
@@ -228,7 +229,6 @@
         .hud-btn i { font-size: 20px; margin-bottom: 8px; transition: transform 0.2s ease; }
         .hud-btn span { font-size: 11px; font-weight: bold; letter-spacing: 1px; }
 
-        /* Aktywne najazdy w stylu celownika interfejsu */
         .hud-btn::after {
             content: '';
             position: absolute;
@@ -248,7 +248,7 @@
         .hud-btn:hover i { transform: scale(1.15); color: var(--franxx-blue); }
         .hud-btn:hover::after { border-color: transparent transparent var(--franxx-blue) transparent; }
 
-        /* --- KONTROLER AUDIO WBUDOWANY W HUD --- */
+        /* --- MEDIA BAR --- */
         .hud-media-bar {
             margin-top: 25px;
             border-top: 1px solid rgba(255,255,255,0.1);
@@ -256,6 +256,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 10px;
         }
 
         .hud-player-controls { display: flex; gap: 8px; }
@@ -276,7 +277,6 @@
             border-color: var(--franxx-red);
         }
 
-        /* --- SPOTIFY INTEGRACJA --- */
         #spotify-hud {
             display: none;
             align-items: center;
@@ -323,22 +323,22 @@
 
     <div id="toast" class="hud-toast">SYSTEM_MSG: DISCORD_COPIED</div>
 
-    <!-- EKRAN SYNCU -->
     <div id="gateway" onclick="connectToFranxx()">
         <div class="gateway-title">CONNECT TO FRANXX</div>
         <div class="gateway-sub">Click to initiate pilot synchronization</div>
     </div>
 
+    <video id="bgVideo" loop muted playsinline>
+        <source src="02/background.mp4" type="video/mp4">
+        </video>
     <img src="02/background.png" id="bgImage" alt="Background">
 
     <audio id="bgMusic" loop>
         <source src="02/background.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- GŁÓWNA STRUKTURA HUD -->
     <div class="hud-container" id="hudFrame">
         
-        <!-- LEWY PANEL: PILOT PROFILE -->
         <div class="hud-pilot-panel">
             <div class="avatar-frame">
                 <img src="02/avatar.png" alt="Pilot Avatar">
@@ -348,7 +348,6 @@
             <div class="status-badge">Purpur to cwel</div>
         </div>
 
-        <!-- PRAWY PANEL: MATRYCA SYSTEMOWA -->
         <div class="hud-main-panel">
             <div>
                 <div class="panel-title-hud">
@@ -367,7 +366,6 @@
                 </div>
             </div>
 
-            <!-- DOLNY PANEL: MEDIA & SPOTIFY -->
             <div class="hud-media-bar">
                 <div id="spotify-hud">
                     <div class="live-pulse"></div>
@@ -375,7 +373,7 @@
                 </div>
                 
                 <div class="hud-player-controls">
-                    <button onclick="triggerAudio()"><i class="fas fa-pause" id="playIcon"></i> PLAY/PAUSE</button>
+                    <button onclick="triggerAudio()"><i class="fas fa-pause" id="playIcon"></i> PLAY</button>
                     <button onclick="triggerMute()"><i class="fas fa-volume-up" id="muteIcon"></i> MUTE</button>
                 </div>
             </div>
