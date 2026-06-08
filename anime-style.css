@@ -1,91 +1,99 @@
-/* --- MANGA STYLE AUDIO PLAYER (RESPONSIVE PC & MOBILE) --- */
-.anime-player {
-    z-index: 100;
+/* --- MANGA & ANIME CYBERPUNK THEME --- */
+:root {
+    --bg-dark: #0d0c10;
+    --anime-pink: #ff2a74;
+    --anime-cyan: #00f0ff;
+    --anime-purple: #7000ff;
+    --font-manga: 'Bangers', cursive;
+    --font-clean: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* --- RESET & ZABEZPIECZENIE EKRANU --- */
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
+
+body {
+    background: var(--bg-dark);
+    color: white;
+    height: 100vh;
     display: flex;
-    background: #0d0c10;
-    border: 3px solid var(--anime-pink);
-    box-shadow: 4px 4px 0px var(--anime-purple);
-    padding: 6px;
-    opacity: 0;
-    transition: opacity 0.4s ease, transform 0.2s ease, top 0.3s, right 0.3s;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Blokuje dziwne paski przewijania na PC i telefonie */
+    font-family: var(--font-clean);
 }
 
-/* Pokazuje player dopiero po wyłączeniu overlay'a */
-.main-wrapper.visible .anime-player { 
-    opacity: 1; 
+/* --- RETRO CRT ANIME LINES --- */
+.crt-lines {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 4px, 6px 100%;
+    pointer-events: none;
 }
 
-.anime-player button {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 16px;
-    padding: 10px;
+/* --- OVERLAY INTERFEJSU --- */
+#overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(13, 12, 16, 0.8);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
-    transition: 0.15s;
+    border: 10px solid #000;
+}
+#overlay.hidden { opacity: 0; visibility: hidden; transition: all 0.5s ease; }
+#overlay span {
+    font-family: var(--font-manga);
+    font-size: 32px;
+    color: var(--anime-pink);
+    text-shadow: 3px 3px 0px #000, 0 0 20px rgba(255, 42, 116, 0.6);
+    letter-spacing: 3px;
+}
+.anime-pulse { animation: glitchPulse 1.5s infinite steps(2); }
+
+@keyframes glitchPulse {
+    0%, 100% { transform: scale(1) skewX(-5deg); color: var(--anime-pink); }
+    50% { transform: scale(1.05) skewX(5deg); color: var(--anime-cyan); text-shadow: -3px -3px 0px #000; }
 }
 
-.anime-player button:hover {
-    color: var(--anime-cyan);
-    transform: scale(1.2);
+/* --- BG VIDEO --- */
+#bgVideo {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    object-fit: cover;
+    filter: brightness(0.35) saturate(1.3);
 }
 
-/* ==========================================================================
-   💻 UKŁAD DLA PC / DUŻYCH EKRANÓW (Player przyklejony i pionowy z prawej strony)
-   ========================================================================== */
-@media (min-width: 769px) {
-    .anime-player {
-        position: absolute;
-        top: 60px;
-        right: -62px; /* Wyrzucenie całkowicie poza główny fioletowy cień karty */
-        flex-direction: column; /* Układ pionowy - ikona pod ikoną */
-        transform: skewY(-10deg); /* Skośny, agresywny styl mangi */
-    }
-    
-    .anime-player button {
-        transform: skewY(10deg); /* Wyprostowanie ikon wewnątrz skosu */
-        padding: 12px 8px;
-    }
-    
-    .anime-player button:hover {
-        transform: skewY(10deg) scale(1.2);
-    }
-    
-    .player-divider {
-        width: 20px;
-        height: 3px;
-        background: var(--anime-pink);
-        margin: 4px 0;
-    }
+/* --- KONTENER GŁÓWNY (KARTA) --- */
+.main-wrapper {
+    position: relative; /* KLUCZOWE: trzyma player blisko siebie */
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    max-width: 500px;
+    background: rgba(13, 12, 16, 0.85);
+    border: 4px solid #000;
+    box-shadow: 12px 12px 0px rgba(112, 0, 255, 0.5);
+    padding: 40px 30px;
+    opacity: 0;
+    transform: scale(0.9) rotate(-2deg);
+    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+.main-wrapper.visible { opacity: 1; transform: scale(1) rotate(0deg); }
 
-/* ==========================================================================
-   📱 UKŁAD DLA TELEFONU (Player poziomy, wyśrodkowany nad avatarem)
-   ========================================================================== */
-@media (max-width: 768px) {
-    .anime-player {
-        position: relative;
-        top: 0;
-        right: 0;
-        margin: 0 auto 25px auto; /* Centrowanie na środku i odstęp od awatara */
-        flex-direction: row; /* Układ poziomy */
-        transform: skewX(-12deg); /* Skos poziomy idealnie pasujący do tagu "D0 DOMKU" */
-        width: fit-content; /* Zwężenie tylko do szerokości przycisków */
-    }
-    
-    .anime-player button {
-        transform: skewX(12deg); /* Wyprostowanie ikon w układzie poziomym */
-        padding: 8px 16px;
-    }
-    
-    .anime-player button:hover {
-        transform: skewX(12deg) scale(1.2);
-    }
-    
-    .player-divider {
-        width: 3px;
-        height: 25px;
-        background: var(--anime-pink);
-        margin: 0 4px;
-    }
-}
+/* --- PROFIL --- */
+.profile-header { text-align: center; margin-bottom: 30px; width: 100%; }
+.av-box { position: relative; width: 120px; height: 120px; margin: 0 auto 20px;
