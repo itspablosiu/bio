@@ -1,98 +1,100 @@
-/* --- ZMIENNE GLOBALNE --- */
+/* --- MANGA & ANIME CYBERPUNK THEME --- */
 :root {
-    --bg: #000000;
-    --card: rgba(10, 10, 10, 0.7);
-    --border: rgba(255, 255, 255, 0.1);
-    --spotify-color: #1DB954;
-    --transition-smooth: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --bg-dark: #0d0c10;
+    --anime-pink: #ff2a74;
+    --anime-cyan: #00f0ff;
+    --anime-purple: #7000ff;
+    --border-thick: 3px solid #ffff00; /* Klasyczny żółty akcent anime */
+    --font-manga: 'Bangers', cursive;
+    --font-clean: 'Plus Jakarta Sans', sans-serif;
 }
 
-/* --- RESET & GŁÓWNE STYLE --- */
+/* --- RESET --- */
 * { 
     margin: 0; 
     padding: 0; 
     box-sizing: border-box; 
-    font-family: 'Plus Jakarta Sans', sans-serif; 
 }
 
 body {
-    background: var(--bg);
+    background: var(--bg-dark);
     color: white;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    font-family: var(--font-clean);
 }
 
-/* --- PRZYCISK POWROTU (LEWY GÓRNY RÓG) --- */
+/* --- RETRO CRT ANIME LINES --- */
+.crt-lines {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 4px, 6px 100%;
+    pointer-events: none;
+}
+
+/* --- PRZYCISK POWROTU (MANGA STYLE) --- */
 .back-home {
     position: fixed;
-    top: 20px;
-    left: 20px;
+    top: 25px;
+    left: 25px;
     z-index: 100;
     text-decoration: none;
-    color: white;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border);
-    padding: 10px 18px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 800;
+    color: #000;
+    background: var(--anime-cyan);
+    border: 3px solid #000;
+    box-shadow: 4px 4px 0px #000;
+    padding: 8px 16px;
+    font-family: var(--font-manga);
+    font-size: 16px;
     letter-spacing: 1px;
     display: flex;
     align-items: center;
     gap: 8px;
-    transition: var(--transition-smooth);
+    transition: 0.15s ease-in-out;
     opacity: 0;
-    pointer-events: none;
+    transform: skewX(-10deg);
 }
-
-.back-home.visible {
-    opacity: 1;
-    pointer-events: auto;
-}
-
+.back-home.visible { opacity: 1; }
 .back-home:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: white;
-    transform: translateX(5px);
-    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.05);
+    box-shadow: 1px 1px 0px #000;
+    transform: skewX(-10deg) translate(3px, 3px);
+    background: var(--anime-pink);
+    color: white;
 }
 
-/* --- EKRAN STARTOWY --- */
+/* --- OVERLAY INTERFEJSU --- */
 #overlay {
     position: fixed;
     inset: 0;
-    background: #000;
+    background: radial-gradient(circle, #1a1525 0%, #050407 100%);
     z-index: 9999;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    transition: opacity 0.8s ease, visibility 0.8s;
+    border: 10px solid #000;
 }
-
-#overlay.hidden {
-    opacity: 0;
-    visibility: hidden;
-}
-
+#overlay.hidden { opacity: 0; visibility: hidden; transition: all 0.5s cubic-bezier(0.77, 0, 0.175, 1); }
 #overlay span {
-    font-size: 14px;
-    letter-spacing: 5px;
-    font-weight: 200;
-    text-transform: uppercase;
-    animation: pulse 2s infinite ease-in-out;
+    font-family: var(--font-manga);
+    font-size: 32px;
+    color: var(--anime-pink);
+    text-shadow: 3px 3px 0px #000, 0 0 20px rgba(255, 42, 116, 0.6);
+    letter-spacing: 3px;
+}
+.anime-pulse { animation: glitchPulse 1.5s infinite steps(2); }
+
+@keyframes glitchPulse {
+    0%, 100% { transform: scale(1) skewX(-5deg); color: var(--anime-pink); }
+    50% { transform: scale(1.05) skewX(5deg); color: var(--anime-cyan); text-shadow: -3px -3px 0px #000; }
 }
 
-@keyframes pulse {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 1; }
-}
-
-/* --- TŁO WIDEO --- */
+/* --- BG VIDEO --- */
 #bgVideo {
     position: fixed;
     inset: 0;
@@ -100,179 +102,176 @@ body {
     height: 100%;
     z-index: -1;
     object-fit: cover;
-    object-position: center;
-    filter: brightness(0.4);
+    filter: brightness(0.4) saturate(1.4);
 }
 
-/* --- GŁÓWNA TREŚĆ --- */
+/* --- KONTENER GŁÓWNY --- */
 .main-wrapper {
     position: relative;
-    z-index: 1;
+    z-index: 5;
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 90%;
     max-width: 500px;
-    opacity: 0; 
-    transform: translateY(20px);
-    transition: opacity 1s ease, transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+    background: rgba(13, 12, 16, 0.85);
+    border: 4px solid #000;
+    box-shadow: 12px 12px 0px rgba(112, 0, 255, 0.5);
+    padding: 40px 30px;
+    border-radius: 0px; /* Styl mangi unika zaokrągleń */
+    opacity: 0;
+    transform: scale(0.9) rotate(-2deg);
+    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.main-wrapper.visible { opacity: 1; transform: scale(1) rotate(0deg); }
+
+/* --- PROFIL (AVATAR & TYTUŁ) --- */
+.profile-header {
+    text-align: center;
+    margin-bottom: 30px;
+    width: 100%;
+}
+.av-box {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+}
+.av-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 4px solid #000;
+    box-shadow: 5px 5px 0px var(--anime-pink);
+}
+.av-badge {
+    position: absolute;
+    bottom: -5px;
+    right: -10px;
+    background: #ffff00;
+    color: #000;
+    font-family: var(--font-manga);
+    font-size: 11px;
+    padding: 2px 8px;
+    border: 2px solid #000;
+    transform: rotate(8deg);
 }
 
-.main-wrapper.visible {
-    opacity: 1;
-    transform: translateY(0);
+.name {
+    font-family: var(--font-manga);
+    font-size: 55px;
+    color: white;
+    text-shadow: 4px 4px 0px var(--anime-purple), 7px 7px 0px #000;
+    letter-spacing: 2px;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+.loc-badge {
+    background: #000;
+    padding: 6px 15px;
+    display: inline-block;
+    transform: skewX(-15deg);
+    border-left: 4px solid var(--anime-cyan);
+}
+.loc {
+    color: var(--anime-cyan);
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    transform: skewX(15deg); /* Odwrócenie skosu dla tekstu */
 }
 
-.profile-header { 
-    margin-bottom: 35px; 
-    text-align: center; 
-}
-
-.av-box { 
-    position: relative; 
-    width: 110px; 
-    height: 110px; 
-    margin: 0 auto 20px; 
-}
-
-.av-box img { 
-    width: 100%; 
-    height: 100%; 
-    border-radius: 50%; 
-    border: 2px solid white; 
-    padding: 5px; 
-    object-fit: cover; 
-}
-
-.av-box::after { 
-    content: ''; 
-    position: absolute; 
-    inset: -10px; 
-    border-radius: 50%; 
-    border: 1px dashed rgba(255,255,255,0.2); 
-    animation: spin 25s linear infinite; 
-}
-
-@keyframes spin { 
-    to { transform: rotate(360deg); } 
-}
-
-.name { 
-    font-size: 40px; 
-    font-weight: 800; 
-    letter-spacing: -1.5px; 
-    line-height: 1.1;
-}
-
-.loc { 
-    font-size: 10px; 
-    color: #aaa; 
-    letter-spacing: 1px; 
-    text-transform: uppercase; 
-    margin-top: 8px; 
-    max-width: 350px; 
-    line-height: 1.4; 
-}
-
-/* --- SIATKA KAFELKÓW (SOCIAL GRID) --- */
+/* --- SOCIAL GRID (SIATKA ANIME) --- */
 .social-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 15px;
     width: 100%;
 }
 
-@media (max-width: 420px) {
-    .social-grid { grid-template-columns: repeat(3, 1fr); }
-}
-
 .btn {
+    width: calc(25% - 12px);
     aspect-ratio: 1/1;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 18px;
+    background: #131217;
+    border: 3px solid #000;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-decoration: none;
     color: white;
-    transition: var(--transition-smooth);
-    backdrop-filter: blur(10px);
+    position: relative;
+    transition: 0.1s ease-in-out;
 }
 
+@media (max-width: 440px) {
+    .btn { width: calc(33.33% - 10px); }
+}
+
+.btn i { font-size: 24px; margin-bottom: 6px; z-index: 2; }
+.btn span { font-family: var(--font-manga); font-size: 14px; letter-spacing: 0.5px; z-index: 2; color: #fff; }
+
+/* --- KOLOROWE BAZY DLA KAFELKÓW PO NAJECHANIU --- */
 .btn:hover {
-    border-color: rgba(255, 255, 255, 0.8);
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.12);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    color: #000;
+    transform: translate(-4px, -4px);
 }
+.btn:hover span { color: #000; }
 
-.btn i { font-size: 22px; margin-bottom: 8px; }
-.btn span { font-size: 9px; font-weight: 800; opacity: 0.6; letter-spacing: 0.5px; }
+.btn-yt:hover { background: #FF0000; box-shadow: 4px 4px 0 #ffff00; border-color: #000; }
+.btn-ig:hover { background: var(--anime-pink); box-shadow: 4px 4px 0 var(--anime-cyan); border-color: #000; }
+.btn-gh:hover { background: #fff; box-shadow: 4px 4px 0 var(--anime-purple); border-color: #000; }
+.btn-dsc:hover { background: #5865F2; box-shadow: 4px 4px 0 #ffff00; border-color: #000; }
+.btn-stm:hover { background: var(--anime-cyan); box-shadow: 4px 4px 0 var(--anime-pink); border-color: #000; }
+.btn-x:hover { background: #fff; box-shadow: 4px 4px 0 #000; border-color: #000; }
+.btn-ttv:hover { background: #9146FF; box-shadow: 4px 4px 0 var(--anime-cyan); border-color: #000; }
 
-/* --- WIDGET SPOTIFY (EQUALIZER) --- */
-#spotify { 
-    margin-top: 35px; 
-    font-size: 11px; 
-    color: var(--spotify-color); 
-    font-weight: 600; 
-    display: none; 
-    align-items: center; 
-    gap: 10px; 
-    background: rgba(29, 185, 84, 0.05);
+/* --- WIDGET SPOTIFY (ANIME EQUALIZER) --- */
+#spotify {
+    margin-top: 30px;
+    background: #ffff00;
+    color: #000;
+    border: 3px solid #000;
+    box-shadow: 5px 5px 0px var(--anime-pink);
     padding: 8px 16px;
-    border-radius: 20px;
-    border: 1px solid rgba(29, 185, 84, 0.15);
+    font-family: var(--font-manga);
+    font-size: 15px;
+    letter-spacing: 1px;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    transform: skewX(-8deg);
 }
+.eq-container { display: flex; align-items: flex-end; gap: 3px; width: 14px; height: 14px; transform: skewX(8deg); }
+.bar { width: 3px; height: 100%; background: #000; animation: musicAnime 0.6s steps(4) infinite alternate; transform-origin: bottom; }
+.bar:nth-child(2) { animation-delay: 0.15s; }
+.bar:nth-child(3) { animation-delay: 0.30s; }
 
-.eq-container {
-    display: flex;
-    align-items: flex-end;
-    gap: 2px;
-    width: 12px;
-    height: 14px;
-}
-
-.bar { 
-    width: 2px; 
-    height: 100%; 
-    background: var(--spotify-color); 
-    animation: music 0.8s ease-in-out infinite alternate; 
-    transform-origin: bottom;
-}
-.bar:nth-child(2) { animation-delay: 0.2s; animation-duration: 0.6s; }
-.bar:nth-child(3) { animation-delay: 0.4s; animation-duration: 0.9s; }
-
-@keyframes music { 
-    from { transform: scaleY(0.2); } 
-    to { transform: scaleY(1); } 
-}
+@keyframes musicAnime { from { transform: scaleY(0.2); } to { transform: scaleY(1); } }
+#track-name { transform: skewX(8deg); }
 
 /* --- TOAST / POWIADOMIENIE --- */
 .copy-notification {
     position: fixed;
-    top: 20px;
-    right: 20px;
-    background: rgba(10, 10, 10, 0.9);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border);
+    bottom: 30px;
+    right: 30px;
+    top: auto; /* Przeniesiony na dół dla lepszego balansu kompozycji */
+    background: var(--anime-purple);
+    border: 3px solid #000;
+    box-shadow: 5px 5px 0px #ffff00;
     color: white;
     padding: 12px 24px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 800;
+    font-family: var(--font-manga);
+    font-size: 18px;
     letter-spacing: 1px;
     z-index: 10000;
-    transform: translateX(180%);
-    transition: var(--transition-smooth);
+    transform: translateY(200%) skewX(-10deg);
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
     align-items: center;
     gap: 10px;
 }
-
-.copy-notification.show {
-    transform: translateX(0);
-}
-
-.copy-notification i { color: var(--spotify-color); }
+.copy-notification.show { transform: translateY(0) skewX(-10deg); }
+.copy-notification i { color: #ffff00; }
