@@ -244,12 +244,55 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
+        /* SUWAK GŁOŚNOŚCI */
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .volume-icon {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+            width: 14px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .volume-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 50px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+        }
+        .volume-slider::-moz-range-thumb {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            border: none;
+        }
+
         /* PASEK POSTĘPU AUDIO */
         .audio-progress-container {
             display: flex;
             align-items: center;
             gap: 8px;
             padding: 0 4px;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            padding-left: 10px;
         }
         .time-text {
             font-size: 10px;
@@ -258,7 +301,7 @@
             user-select: none;
         }
         .progress-bar {
-            width: 80px;
+            width: 70px;
             height: 4px;
             background: rgba(255, 255, 255, 0.15);
             border-radius: 2px;
@@ -318,13 +361,14 @@
 
         @media (max-width: 420px) {
             .system-container { transform: scale(0.8); }
-            .progress-bar { width: 50px; }
+            .progress-bar { width: 40px; }
+            .volume-slider { width: 35px; }
         }
     </style>
 </head>
 <body>
 
-    <div id="toast" class="toast">Discord copied to clipboard</div>
+    <div id="toast" class="toast">nickname pomyślne skopiowano!</div>
 
     <!-- GATEWAY -->
     <div id="gateway" onclick="initOrbit()">
@@ -345,7 +389,7 @@
         
         <!-- JĄDRO -->
         <div class="center-core">
-            <img src="02/avatar.png" alt="Avatar">
+            <img src="avatar2.png" alt="Avatar">
         </div>
 
         <!-- WEWNĘTRZNA ORBITA -->
@@ -388,9 +432,12 @@
         <button class="ctrl-btn" onclick="toggleAudio()" title="Pause/Play">
             <i class="fas fa-pause" id="playIcon"></i>
         </button>
-        <button class="ctrl-btn" onclick="toggleMute()" title="Mute/Unmute">
-            <i class="fas fa-volume-up" id="muteIcon"></i>
-        </button>
+
+        <!-- KONTROLA GŁOŚNOŚCI -->
+        <div class="volume-container">
+            <i class="fas fa-volume-down volume-icon" id="volIcon" onclick="quickMuteToggle()"></i>
+            <input type="range" class="volume-slider" id="volSlider" min="0" max="1" step="0.01" value="0.2" oninput="changeVolume(this.value)">
+        </div>
 
         <!-- PASEK CZASU I TRWANIA UTWORU -->
         <div class="audio-progress-container">
@@ -412,6 +459,7 @@
     <script>
         const audio = document.getElementById('bgMusic');
         const video = document.getElementById('bgVideo');
+        let previousVolume = 0.2;
 
         function initOrbit() {
             document.getElementById('gateway').classList.add('hide');
@@ -423,7 +471,7 @@
                 });
             }
             if (audio) {
-                audio.volume = 0.2;
+                audio.volume = parseFloat(document.getElementById('volSlider').value);
                 audio.play().catch(() => {});
             }
         }
@@ -448,11 +496,37 @@
             }
         }
 
-        function toggleMute() {
-            const icon = document.getElementById('muteIcon');
+        /* OBSŁUGA GŁOŚNOŚCI */
+        function changeVolume(val) {
             if (!audio) return;
-            audio.muted = !audio.muted;
-            icon.className = audio.muted ? "fas fa-volume-mute" : "fas fa-volume-up";
+            audio.volume = val;
+            updateVolIcon(val);
+        }
+
+        function updateVolIcon(val) {
+            const icon = document.getElementById('volIcon');
+            const v = parseFloat(val);
+            if (v === 0) {
+                icon.className = "fas fa-volume-mute volume-icon";
+            } else if (v < 0.5) {
+                icon.className = "fas fa-volume-down volume-icon";
+            } else {
+                icon.className = "fas fa-volume-up volume-icon";
+            }
+        }
+
+        function quickMuteToggle() {
+            if (!audio) return;
+            const slider = document.getElementById('volSlider');
+            if (audio.volume > 0) {
+                previousVolume = audio.volume;
+                audio.volume = 0;
+                slider.value = 0;
+            } else {
+                audio.volume = previousVolume > 0 ? previousVolume : 0.2;
+                slider.value = audio.volume;
+            }
+            updateVolIcon(slider.value);
         }
 
         /* OBSŁUGA PASKA POSTĘPU WIDEO/AUDIO */
