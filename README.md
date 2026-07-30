@@ -1,2 +1,1 @@
-guns.lol is shit
-WERSJA Z STYCZNIA 2026, KTÓRA JEST NIEAKTUALNA
+guns.lol is premium shit
