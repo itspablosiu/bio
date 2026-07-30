@@ -1,1 +1,155 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Odliczanie OBS</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
+    body {
+      background-color: transparent; /* Przezroczyste tło dla OBS */
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+    }
+
+    .container {
+      text-align: center;
+      background: rgba(0, 0, 0, 0.65);
+      padding: 2.5rem 4rem;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+      font-size: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-bottom: 1.5rem;
+      color: #e0e0e0;
+    }
+
+    .timer {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .time-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 90px;
+    }
+
+    .number {
+      font-size: 4.5rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+
+    .label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 0.5rem;
+      color: #a0a0a0;
+    }
+
+    .separator {
+      font-size: 3.5rem;
+      font-weight: 300;
+      margin-top: -1rem;
+      color: #ff4757;
+    }
+
+    /* Styl po zakończeniu odliczania */
+    .live-text {
+      display: none;
+      font-size: 4rem;
+      font-weight: 900;
+      color: #ff4757;
+      text-transform: uppercase;
+      letter-spacing: 5px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.98); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1 id="title">Transmisja rozpocznie się za</h1>
+    
+    <div class="timer" id="timer">
+      <div class="time-block">
+        <span class="number" id="minutes">00</span>
+        <span class="label">Minut</span>
+      </div>
+      <span class="separator">:</span>
+      <div class="time-block">
+        <span class="number" id="seconds">00</span>
+        <span class="label">Sekund</span>
+      </div>
+    </div>
+
+    <div class="live-text" id="live-text">ZACZYNAMY!</div>
+  </div>
+
+  <script>
+    // --- KONFIGURACJA ---
+    // Wpisz tutaj czas odliczania w minutach:
+    const COUNTDOWN_MINUTES = 5; 
+    // ---------------------
+
+    const targetTime = new Date().getTime() + COUNTDOWN_MINUTES * 60 * 1000;
+
+    const minutesEl = document.getElementById('minutes');
+    const secondsEl = document.getElementById('seconds');
+    const timerEl = document.getElementById('timer');
+    const titleEl = document.getElementById('title');
+    const liveTextEl = document.getElementById('live-text');
+
+    const updateTimer = () => {
+      const now = new Date().getTime();
+      const distance = targetTime - now;
+
+      if (distance <= 0) {
+        clearInterval(interval);
+        timerEl.style.display = 'none';
+        titleEl.style.display = 'none';
+        liveTextEl.style.display = 'block';
+        return;
+      }
+
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      minutesEl.textContent = String(minutes).padStart(2, '0');
+      secondsEl.textContent = String(seconds).padStart(2, '0');
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+  </script>
+</body>
+</html> 
