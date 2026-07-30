@@ -34,7 +34,7 @@
         }
 
         /* TŁO MEDIA */
-        #bgVideo, #bgImage {
+        #bgVideo {
             position: fixed;
             inset: 0;
             width: 100%;
@@ -42,6 +42,7 @@
             object-fit: cover;
             z-index: 1;
             filter: brightness(0.2) contrast(1.1);
+            pointer-events: none;
         }
 
         /* GATEWAY STARTOWY */
@@ -298,8 +299,8 @@
         <div class="core-pulse"></div>
     </div>
 
-    <!-- TŁO MEDIA -->
-    <video id="bgVideo" loop muted playsinline>
+    <!-- TŁO MEDIA (brak obrazu podrzędnego, w razie błędu wideo zostaje schowane) -->
+    <video id="bgVideo" loop muted playsinline onerror="this.style.display='none';">
         <source src="background.mp4" type="video/mp4">
     </video>
 
@@ -375,7 +376,11 @@
             document.getElementById('gateway').classList.add('hide');
             document.getElementById('mainSystem').classList.add('active');
 
-            if (video) video.play().catch(() => {});
+            if (video) {
+                video.play().catch(() => {
+                    video.style.display = 'none';
+                });
+            }
             if (audio) {
                 audio.volume = 0.2;
                 audio.play().catch(() => {});
