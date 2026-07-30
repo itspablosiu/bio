@@ -138,7 +138,7 @@
             z-index: 11;
         }
 
-        /* IKONY SATELITARNE (odblokowane klikanie za pomocą pointer-events: auto) */
+        /* IKONY SATELITARNE */
         .satellite {
             position: absolute;
             width: 48px;
@@ -237,10 +237,41 @@
             justify-content: center;
             align-items: center;
             transition: all 0.2s ease;
+            flex-shrink: 0;
         }
         .ctrl-btn:hover {
             color: #fff;
             background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* PASEK POSTĘPU AUDIO */
+        .audio-progress-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 4px;
+        }
+        .time-text {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            font-variant-numeric: tabular-nums;
+            user-select: none;
+        }
+        .progress-bar {
+            width: 80px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 2px;
+            transition: width 0.1s linear;
         }
 
         #scrobble-info {
@@ -287,6 +318,7 @@
 
         @media (max-width: 420px) {
             .system-container { transform: scale(0.8); }
+            .progress-bar { width: 50px; }
         }
     </style>
 </head>
@@ -299,8 +331,8 @@
         <div class="core-pulse"></div>
     </div>
 
-    <!-- TŁO MEDIA (brak obrazu podrzędnego, w razie błędu wideo zostaje schowane) -->
-    <video id="background.mp4" loop muted playsinline onerror="this.style.display='none';">
+    <!-- TŁO MEDIA -->
+    <video id="bgVideo" loop muted playsinline onerror="this.style.display='none';">
         <source src="background.mp4" type="video/mp4">
     </video>
 
@@ -360,6 +392,15 @@
             <i class="fas fa-volume-up" id="muteIcon"></i>
         </button>
 
+        <!-- PASEK CZASU I TRWANIA UTWORU -->
+        <div class="audio-progress-container">
+            <span class="time-text" id="currentTime">0:00</span>
+            <div class="progress-bar" onclick="seekAudio(event)">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="time-text" id="durationTime">0:00</span>
+        </div>
+
         <div id="scrobble-info">
             <div class="live-dot"></div>
             <a id="scrobble-link" href="#" target="_blank" title="Now Playing">
@@ -412,6 +453,33 @@
             if (!audio) return;
             audio.muted = !audio.muted;
             icon.className = audio.muted ? "fas fa-volume-mute" : "fas fa-volume-up";
+        }
+
+        /* OBSŁUGA PASKA POSTĘPU WIDEO/AUDIO */
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        if (audio) {
+            audio.addEventListener('timeupdate', () => {
+                if (!audio.duration) return;
+                const pct = (audio.currentTime / audio.duration) * 100;
+                document.getElementById('progressFill').style.width = pct + '%';
+                document.getElementById('currentTime').innerText = formatTime(audio.currentTime);
+                document.getElementById('durationTime').innerText = formatTime(audio.duration);
+            });
+        }
+
+        function seekAudio(event) {
+            if (!audio || !audio.duration) return;
+            const bar = event.currentTarget;
+            const rect = bar.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            const pct = clickX / rect.width;
+            audio.currentTime = pct * audio.duration;
         }
 
         const LF_USER = "arkadivsz";
