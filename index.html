@@ -47,22 +47,25 @@
             pointer-events: none;
         }
 
-        /* GATEWAY */
+        /* GATEWAY - POPRAWIONY Z-INDEX I ODBIÓR KLIKNIĘĆ */
         #gateway {
             position: fixed;
             inset: 0;
             background: #000000;
-            z-index: 9999;
+            z-index: 99999;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
             transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         #gateway.hide {
             opacity: 0;
             visibility: hidden;
+            pointer-events: none;
         }
 
         .gateway-content {
@@ -70,6 +73,7 @@
             flex-direction: column;
             align-items: center;
             gap: 16px;
+            pointer-events: none;
         }
 
         .core-pulse {
@@ -289,10 +293,11 @@
             border-radius: 2px;
         }
 
+        /* POPRAWIONA SZEROKOŚĆ KÓŁKA SUWAKA */
         .volume-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 100px;
+            width: 10px;
             height: 10px;
             border-radius: 50%;
             background: #ffffff;
@@ -363,7 +368,7 @@
             transform: translateY(-50px);
             opacity: 0;
             transition: all 0.4s ease;
-            z-index: 10000;
+            z-index: 100000;
         }
 
         .toast.active {
@@ -482,8 +487,8 @@
 
     <script>
         const DEFAULT_TRACK = {
-            title: "Background Vibe",
-            artist: "Pablo",
+            title: "KOSZT BYCIA BOSS",
+            artist: "Kubi Producent, Bedoes 2115, kuqe 2115, Szpaku",
             cover: "cover.jpg"
         };
 
@@ -609,10 +614,4 @@
                     setTrackMetadata(DEFAULT_TRACK.title, DEFAULT_TRACK.artist, DEFAULT_TRACK.cover);
                     container.style.display = 'none';
                 }
-            } catch(e) {}
-        }
-
-        function copyDiscord() {
-            navigator.clipboard.writeText('pawissek').then(() => {
-                const toast = document.getElementById('toast');
-                toast.classList.add('acti
+ 
