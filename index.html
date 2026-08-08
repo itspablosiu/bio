@@ -13,7 +13,7 @@
         <i class="fas fa-check-circle"></i> Twój Nick Discord został skopiowany!
     </div>
 
-    <div id="gateway" onclick="initOrbit()">
+    <div id="gateway" onclick="initPage()">
         <div class="gateway-content">
             <div class="core-pulse"></div>
             <span class="gateway-text">KLIKNIJ, ABY WEJŚĆ</span>
@@ -25,53 +25,67 @@
     </video>
 
     <audio id="bgMusic" loop>
-        <source src="02/background.mp3" type="audio/mpeg">
+        <source src="kosztbyciaboss.mp3" type="audio/mpeg">
     </audio>
 
-    <main class="system-container" id="mainSystem">
-        
-        <div class="center-core">
-            <div class="avatar-glow"></div>
-            <img src="avatar2.png" alt="Avatar">
+    <main class="bio-card" id="mainCard">
+        <div class="profile-header">
+            <div class="avatar-wrapper">
+                <div class="avatar-glow"></div>
+                <img src="avatar2.png" alt="Avatar" class="avatar-img">
+            </div>
+            <h1 class="profile-title">pawissek</h1>
+            <p class="profile-subtitle">bio.nalogowiec.pl</p>
         </div>
 
-        <div class="orbit orbit-1">
-            <a href="https://youtube.com/@pawissek" target="_blank" rel="noopener noreferrer" class="satellite sat-1" onmouseenter="showTag('YouTube')" onmouseleave="hideTag()">
+        <div class="links-grid">
+            <a href="https://youtube.com/@pawissek" target="_blank" rel="noopener noreferrer" class="social-btn">
                 <i class="fab fa-youtube"></i>
+                <span>YouTube</span>
             </a>
-            <a href="https://github.com/itspablosiu" target="_blank" rel="noopener noreferrer" class="satellite sat-2" onmouseenter="showTag('GitHub')" onmouseleave="hideTag()">
+            <a href="https://github.com/itspablosiu" target="_blank" rel="noopener noreferrer" class="social-btn">
                 <i class="fab fa-github"></i>
+                <span>GitHub</span>
             </a>
-            <a href="https://instagram.com/pawissek" target="_blank" rel="noopener noreferrer" class="satellite sat-3" onmouseenter="showTag('Instagram')" onmouseleave="hideTag()">
+            <a href="https://instagram.com/pawissek" target="_blank" rel="noopener noreferrer" class="social-btn">
                 <i class="fab fa-instagram"></i>
+                <span>Instagram</span>
             </a>
-            <button onclick="copyDiscord()" class="satellite sat-4" onmouseenter="showTag('Discord')" onmouseleave="hideTag()">
+            <button onclick="copyDiscord()" class="social-btn">
                 <i class="fab fa-discord"></i>
+                <span>Discord</span>
             </button>
-        </div>
-
-        <div class="orbit orbit-2">
-            <a href="https://steamcommunity.com/id/pawissek/" target="_blank" rel="noopener noreferrer" class="satellite sat-5" onmouseenter="showTag('Steam')" onmouseleave="hideTag()">
+            <a href="https://steamcommunity.com/id/pawissek/" target="_blank" rel="noopener noreferrer" class="social-btn">
                 <i class="fab fa-steam"></i>
+                <span>Steam</span>
             </a>
-            <a href="https://x.com/pablosiu_" target="_blank" rel="noopener noreferrer" class="satellite sat-6" onmouseenter="showTag('Twitter / X')" onmouseleave="hideTag()">
+            <a href="https://x.com/pablosiu_" target="_blank" rel="noopener noreferrer" class="social-btn">
                 <i class="fab fa-x-twitter"></i>
+                <span>Twitter / X</span>
             </a>
-            <a href="https://twitch.tv/pablosiu_" target="_blank" rel="noopener noreferrer" class="satellite sat-7" onmouseenter="showTag('Twitch')" onmouseleave="hideTag()">
+            <a href="https://twitch.tv/pablosiu_" target="_blank" rel="noopener noreferrer" class="social-btn">
                 <i class="fab fa-twitch"></i>
+                <span>Twitch</span>
             </a>
-            <a href="https://last.fm/user/arkadivsz" target="_blank" rel="noopener noreferrer" class="satellite sat-8" onmouseenter="showTag('Last.fm')" onmouseleave="hideTag()">
+            <a href="https://last.fm/user/arkadivsz" target="_blank" rel="noopener noreferrer" class="social-btn">
                 <i class="fab fa-lastfm"></i>
+                <span>Last.fm</span>
             </a>
         </div>
-
-        <div class="tooltip-display" id="tooltip"></div>
     </main>
 
     <footer class="bottom-controls">
         <button class="ctrl-btn" onclick="toggleAudio()" title="Pause/Play">
             <i class="fas fa-pause" id="playIcon"></i>
         </button>
+
+        <div class="track-info">
+            <img id="trackCover" src="cover.jpg" alt="Cover" class="track-cover">
+            <div class="track-details">
+                <span class="track-title" id="trackTitle">Ładowanie...</span>
+                <span class="track-artist" id="trackArtist">Nieznany Wykonawca</span>
+            </div>
+        </div>
 
         <div class="volume-container">
             <i class="fas fa-volume-down volume-icon" id="volIcon" onclick="quickMuteToggle()"></i>
@@ -87,21 +101,36 @@
         </div>
 
         <div id="scrobble-info">
-            <div class="live-dot"></div>
-            <a id="scrobble-link" href="#" target="_blank" title="Now Playing">
-                <i class="fas fa-music"></i>
+            <div class="live-dot" title="Słuchane na żywo"></div>
+            <a id="scrobble-link" href="#" target="_blank" title="Otwórz w Spotify">
+                <i class="fab fa-spotify"></i>
             </a>
         </div>
     </footer>
 
     <script>
+        const DEFAULT_TRACK = {
+            title: "KOSZT BYCIA BOSS",
+            artist: "Kubi Producent, Bedoes 2115, kuqe 2115, Szpaku",
+            cover: "cover.jpg"
+        };
+
         const audio = document.getElementById('bgMusic');
         const video = document.getElementById('bgVideo');
         let previousVolume = 0.2;
 
-        function initOrbit() {
+        setTrackMetadata(DEFAULT_TRACK.title, DEFAULT_TRACK.artist, DEFAULT_TRACK.cover);
+
+        function setTrackMetadata(title, artist, coverUrl) {
+            document.getElementById('trackTitle').innerText = title;
+            document.getElementById('trackArtist').innerText = artist;
+            const coverEl = document.getElementById('trackCover');
+            coverEl.src = coverUrl || DEFAULT_TRACK.cover;
+        }
+
+        function initPage() {
             document.getElementById('gateway').classList.add('hide');
-            document.getElementById('mainSystem').classList.add('active');
+            document.getElementById('mainCard').classList.add('active');
 
             if (video) {
                 video.play().catch(() => { video.style.display = 'none'; });
@@ -113,17 +142,6 @@
 
             fetchLiveTrack();
             setInterval(fetchLiveTrack, 15000);
-        }
-
-        function showTag(text) {
-            const el = document.getElementById('tooltip');
-            el.innerText = text;
-            el.classList.add('visible');
-        }
-
-        function hideTag() {
-            const el = document.getElementById('tooltip');
-            el.classList.remove('visible');
         }
 
         function toggleAudio() {
@@ -207,12 +225,16 @@
                 const link = document.getElementById('scrobble-link');
                 
                 if (active && track) {
-                    container.style.display = 'flex';
                     const artist = track.artist['#text'];
                     const name = track.name;
-                    link.title = `Słucha teraz: ${artist} - ${name}`;
+                    const coverUrl = track.image?.[2]?.['#text'] || track.image?.[1]?.['#text'] || DEFAULT_TRACK.cover;
+                    
+                    setTrackMetadata(name, artist, coverUrl);
+                    container.style.display = 'flex';
+                    link.title = `Słuchasz na żywo: ${artist} - ${name}`;
                     link.href = `https://open.spotify.com/search/${encodeURIComponent(artist + " " + name)}`;
                 } else {
+                    setTrackMetadata(DEFAULT_TRACK.title, DEFAULT_TRACK.artist, DEFAULT_TRACK.cover);
                     container.style.display = 'none';
                 }
             } catch(e) {}
